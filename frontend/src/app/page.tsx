@@ -14,6 +14,7 @@ export default function Home() {
   const [currentScenario, setCurrentScenario] = useState<AuditScenario>(SCENARIOS.scenarioA);
   const [isAuditing, setIsAuditing] = useState<boolean>(false);
   const [isAudited, setIsAudited] = useState<boolean>(false);
+  const [diffCode, setDiffCode] = useState<string>(SCENARIOS.scenarioA.diffCode);
   const [violations, setViolations] = useState<Violation[]>(SCENARIOS.scenarioA.violations);
   const [score, setScore] = useState<number>(SCENARIOS.scenarioA.score);
   const [status, setStatus] = useState<'REJECTED' | 'WARNING' | 'APPROVED'>(SCENARIOS.scenarioA.status);
@@ -21,6 +22,7 @@ export default function Home() {
 
   const handleScenarioChange = (scenario: AuditScenario) => {
     setCurrentScenario(scenario);
+    setDiffCode(scenario.diffCode);
     setViolations(scenario.violations);
     setScore(scenario.score);
     setStatus(scenario.status);
@@ -32,14 +34,14 @@ export default function Home() {
     setIsAuditing(true);
 
     try {
-      // Attempt live FastAPI Backend call
+      // Live FastAPI Backend call with custom or scenario diff
       const response = await fetch('http://localhost:8000/api/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           scenario_id: currentScenario.id,
           pr_title: currentScenario.prTitle,
-          git_diff: currentScenario.diffCode,
+          git_diff: diffCode,
           nodes: currentScenario.nodes.map(n => ({
             id: n.id,
             label: n.label,
@@ -76,11 +78,9 @@ export default function Home() {
           })));
         }
       } else {
-        // Fallback to local scenario simulation
         fallbackAudit();
       }
     } catch {
-      // Fallback to local scenario simulation if backend offline
       fallbackAudit();
     } finally {
       setIsAuditing(false);
@@ -97,6 +97,7 @@ export default function Home() {
 
   const handleReset = () => {
     setIsAudited(false);
+    setDiffCode(currentScenario.diffCode);
     setEdges(currentScenario.edges.map(e => ({ ...e, isViolated: false })));
   };
 
@@ -133,7 +134,8 @@ export default function Home() {
               prTitle={currentScenario.prTitle}
               prAuthor={currentScenario.prAuthor}
               prBranch={currentScenario.prBranch}
-              diffCode={currentScenario.diffCode}
+              diffCode={diffCode}
+              onDiffChange={setDiffCode}
               onAudit={handleRunAudit}
               isAuditing={isAuditing}
               isAudited={isAudited}
@@ -163,9 +165,9 @@ export default function Home() {
             </span>
           </div>
           <div className="hidden sm:flex items-center space-x-2 text-[11px] text-zinc-500 font-mono">
-            <span>Branch: feat/fastapi-backend</span>
+            <span>Branch: feat/custom-input</span>
             <span>·</span>
-            <span>Pytest: 4/4 Passed (Code 0)</span>
+            <span>Custom Diagram & Diff Active</span>
           </div>
         </div>
       </main>
