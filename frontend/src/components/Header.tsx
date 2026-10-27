@@ -1,9 +1,13 @@
 import React from 'react';
-import { ShieldCheck, GitPullRequest, Sparkles, ExternalLink, Activity } from 'lucide-react';
+import { ShieldCheck, GitPullRequest, Sparkles, ExternalLink, Share2 } from 'lucide-react';
 
-export const Header: React.FC = () => {
+interface Props {
+  onOpenExport?: () => void;
+}
+
+export const Header: React.FC<Props> = ({ onOpenExport }) => {
   return (
-    <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
+    <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center space-x-3">
@@ -33,10 +37,15 @@ export const Header: React.FC = () => {
             <span className="font-medium text-emerald-400">SAM 3.1 + Muse Spark Ready</span>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-950/40 border border-blue-800/40 text-xs text-blue-300">
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            <span>Meta Global AI Hackathon</span>
-          </div>
+          {onOpenExport && (
+            <button
+              onClick={onOpenExport}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-xs font-semibold text-indigo-300 transition-colors shadow-sm"
+            >
+              <Share2 className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Export Topology & PR</span>
+            </button>
+          )}
 
           <a
             href="https://github.com/RITIKSINGH-DEOS/ArchSense"
