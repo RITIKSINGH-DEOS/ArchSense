@@ -9,7 +9,7 @@ import { DiffInspector } from '../components/DiffInspector';
 import { AuditStation } from '../components/AuditStation';
 import { ExportModal } from '../components/ExportModal';
 import { SCENARIOS, AuditScenario, Violation, ArchitectureEdge } from '../data/mockScenarios';
-import { Info } from 'lucide-react';
+import { Info, Sparkles } from 'lucide-react';
 
 export default function Home() {
   const [currentScenario, setCurrentScenario] = useState<AuditScenario>(SCENARIOS.scenarioA);
@@ -103,11 +103,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
       {/* 1. Header with Export Trigger */}
       <Header onOpenExport={() => setIsExportOpen(true)} />
 
-      {/* 2. Executive Metrics Callout Bar */}
+      {/* 2. Executive Metrics Ribbon */}
       <MetricsBar />
 
       {/* Main Studio Area */}
@@ -118,10 +118,10 @@ export default function Home() {
           onSelect={handleScenarioChange}
         />
 
-        {/* 4. Three-Column Evaluator Studio */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 items-start">
-          {/* Column A: Living Architecture Topology (5 cols) */}
-          <div className="lg:col-span-5 h-[480px]">
+        {/* 4. Balanced 3-Column Evaluator Studio */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1 items-stretch">
+          {/* Column A: Living Architecture Topology */}
+          <div className="h-[540px]">
             <ArchitectureCanvas
               nodes={currentScenario.nodes}
               edges={edges}
@@ -129,8 +129,8 @@ export default function Home() {
             />
           </div>
 
-          {/* Column B: Git PR Code Diff (4 cols) */}
-          <div className="lg:col-span-4 h-[480px]">
+          {/* Column B: Git PR Code Diff */}
+          <div className="h-[540px]">
             <DiffInspector
               prTitle={currentScenario.prTitle}
               prAuthor={currentScenario.prAuthor}
@@ -144,8 +144,8 @@ export default function Home() {
             />
           </div>
 
-          {/* Column C: Real-Time Audit Station (3 cols) */}
-          <div className="lg:col-span-3 h-[480px]">
+          {/* Column C: Real-Time Audit Station */}
+          <div className="h-[540px]">
             <AuditStation
               score={score}
               status={status}
@@ -158,16 +158,16 @@ export default function Home() {
         </div>
 
         {/* 5. Evaluator Context Banner */}
-        <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
+        <div className="p-3.5 rounded-2xl bg-zinc-950/40 border border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-zinc-400 gap-2">
           <div className="flex items-center space-x-2">
-            <Info className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+            <Sparkles className="w-4 h-4 text-indigo-400 flex-shrink-0" />
             <span>
-              <strong>Evaluator Note:</strong> Built for zero-hardware evaluation at the Meta Global AI Developer Hackathon.
-              Demonstrates Meta SAM 3.1 visual node segmentation coupled with Meta Model API (Muse Spark) semantic code reasoning.
+              <strong className="text-zinc-200">Evaluator Note:</strong> Built for zero-hardware evaluation at the Meta Global AI Hackathon.
+              Combines Meta SAM 3.1 visual segmentation with Meta Model API (Muse Spark) semantic code reasoning.
             </span>
           </div>
-          <div className="hidden sm:flex items-center space-x-2 text-[11px] text-zinc-500 font-mono">
-            <span>Branch: feat/export-sync</span>
+          <div className="flex items-center space-x-2 text-[11px] text-zinc-500 font-mono flex-shrink-0">
+            <span className="text-emerald-400">● Engine Active</span>
             <span>·</span>
             <span>Living Sync: Mermaid / JSON / PR Markdown</span>
           </div>

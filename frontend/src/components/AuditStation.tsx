@@ -13,6 +13,10 @@ import {
   Copy,
   Check,
   Share2,
+  Sparkles,
+  ArrowRight,
+  MessageSquareCode,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 interface Props {
@@ -33,17 +37,18 @@ export const AuditStation: React.FC<Props> = ({
   onOpenExport,
 }) => {
   const [copiedReview, setCopiedReview] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'violations' | 'bot'>('violations');
 
   if (!isAudited && !isAuditing) {
     return (
-      <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-8 flex flex-col items-center justify-center text-center h-full min-h-[300px]">
-        <div className="w-12 h-12 rounded-2xl bg-zinc-800/80 border border-zinc-700/60 flex items-center justify-center text-zinc-400 mb-3">
-          <ShieldAlert className="w-6 h-6" />
+      <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full min-h-[380px] shadow-2xl shadow-black/40 backdrop-blur-xl">
+        <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/[0.08] flex items-center justify-center text-zinc-500 mb-3 shadow-inner">
+          <ShieldAlert className="w-6 h-6 text-zinc-400" />
         </div>
-        <h3 className="text-sm font-semibold text-zinc-200">Audit Station Idle</h3>
-        <p className="text-xs text-zinc-400 max-w-sm mt-1">
-          Select an evaluator scenario or paste a custom PR diff, then click{' '}
-          <strong className="text-indigo-400">Run ArchSense Boundary Audit</strong> to inspect system violations.
+        <h3 className="text-sm font-semibold text-zinc-200 tracking-tight">Audit Station Standby</h3>
+        <p className="text-xs text-zinc-400 max-w-xs mt-1.5 leading-relaxed">
+          Select an evaluator scenario or test custom diffs, then trigger{' '}
+          <span className="text-indigo-400 font-medium">Run Audit</span> to inspect architectural boundaries.
         </p>
       </div>
     );
@@ -51,9 +56,12 @@ export const AuditStation: React.FC<Props> = ({
 
   const isApproved = status === 'APPROVED';
   const statusColor = isApproved ? 'text-emerald-400' : 'text-rose-400';
-  const badgeBg = isApproved
-    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/40'
-    : 'bg-rose-950/60 text-rose-400 border-rose-800/40';
+  const badgeBorder = isApproved
+    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+    : 'border-rose-500/30 bg-rose-500/10 text-rose-300';
+  const progressBarColor = isApproved
+    ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
+    : 'bg-gradient-to-r from-rose-600 to-rose-400';
 
   const handleCopyReview = () => {
     let md = `## ${isApproved ? '✅' : '❌'} ArchSense Architectural Governance Check: **${status}** (${score}/100)\n\n`;
@@ -76,157 +84,220 @@ export const AuditStation: React.FC<Props> = ({
   };
 
   return (
-    <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl overflow-hidden flex flex-col h-full shadow-lg">
-      {/* Header with Score */}
-      <div className="p-3 border-b border-zinc-800 bg-zinc-950 flex items-center justify-between">
+    <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl overflow-hidden flex flex-col h-full shadow-2xl shadow-black/60 backdrop-blur-xl">
+      {/* 1. Header Toolbar */}
+      <div className="px-4 py-3 border-b border-white/[0.06] flex items-center justify-between bg-zinc-950/60">
         <div className="flex items-center space-x-2">
           {isApproved ? (
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
           ) : (
             <ShieldAlert className="w-4 h-4 text-rose-400" />
           )}
-          <span className="text-sm font-semibold text-zinc-200">Audit Governance Decision</span>
+          <span className="text-xs font-semibold text-zinc-200 tracking-tight">Audit Decision</span>
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${badgeBg}`}>
+          <span
+            className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border flex items-center gap-1.5 ${badgeBorder}`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isApproved ? 'bg-emerald-400' : 'bg-rose-400 animate-pulse'
+              }`}
+            />
             {status}
           </span>
         </div>
       </div>
 
-      <div className="p-4 space-y-4 overflow-y-auto max-h-[600px]">
-        {/* Score Card */}
-        <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between">
-          <div>
-            <div className="text-xs text-zinc-400 font-medium">Architecture Integrity Score</div>
-            <div className={`text-3xl font-black tracking-tight ${statusColor}`}>
+      {/* 2. Sleek Score & Health Summary */}
+      <div className="px-4 py-3 bg-zinc-900/40 border-b border-white/[0.06]">
+        <div className="flex items-end justify-between mb-1.5">
+          <div className="flex items-baseline space-x-1.5">
+            <span className={`text-2xl font-black tracking-tight ${statusColor}`}>
               {score}
-              <span className="text-zinc-600 text-sm font-normal"> / 100</span>
-            </div>
+            </span>
+            <span className="text-xs text-zinc-500 font-mono">/ 100</span>
+            <span className="text-[11px] text-zinc-400 ml-2 font-medium">Health Score</span>
           </div>
 
-          <div className="text-right">
-            <div className="text-[11px] text-zinc-500 font-mono">Pydantic Policy Gate</div>
-            <div className="text-xs font-semibold text-zinc-300 flex items-center gap-1 justify-end">
-              <Lock className="w-3 h-3 text-indigo-400" />
-              {isApproved ? '0 Violations Blocked' : `${violations.length} Critical Violations`}
-            </div>
+          <div className="text-[11px] font-mono text-zinc-400 flex items-center gap-1">
+            <Lock className="w-3 h-3 text-indigo-400" />
+            <span>{isApproved ? 'All Policies Cleared' : `${violations.length} Breach${violations.length > 1 ? 'es' : ''}`}</span>
           </div>
         </div>
 
-        {/* Violations List */}
-        <div className="space-y-2.5">
-          <div className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-            Detected Architectural Anomalies ({violations.length})
-          </div>
+        {/* Minimal Progress Bar */}
+        <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all duration-500 ${progressBarColor}`}
+            style={{ width: `${Math.max(score, 4)}%` }}
+          />
+        </div>
+      </div>
 
-          {violations.map((v) => {
-            const isCompliant = v.severity === 'COMPLIANT';
-            return (
-              <div
-                key={v.id}
-                className={`p-3 rounded-lg border text-xs ${
-                  isCompliant
-                    ? 'bg-emerald-950/20 border-emerald-800/30'
-                    : 'bg-rose-950/20 border-rose-800/30'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-2 mb-1.5">
-                  <div className="font-semibold text-zinc-200 flex items-center gap-1.5">
-                    {isCompliant ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    ) : (
-                      <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                    )}
-                    <span>{v.title}</span>
-                  </div>
-                  <span
-                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase ${
-                      isCompliant
-                        ? 'bg-emerald-900/40 text-emerald-300 border-emerald-700/50'
-                        : 'bg-rose-900/40 text-rose-300 border-rose-700/50'
-                    }`}
-                  >
-                    {v.severity}
-                  </span>
-                </div>
-
-                <div className="flex items-center space-x-2 text-[11px] text-zinc-400 font-mono mb-2">
-                  <FileCode className="w-3 h-3 text-zinc-500" />
-                  <span>{v.file}</span>
-                  <span className="text-zinc-600">·</span>
-                  <span className="text-indigo-400">{v.line}</span>
-                </div>
-
-                <p className="text-zinc-300 text-[11px] leading-relaxed mb-2">
-                  {v.breachDescription}
-                </p>
-
-                <div className="p-2 rounded bg-zinc-900/80 border border-zinc-800/80 text-[11px]">
-                  <strong className="text-zinc-400 block mb-0.5">Recommended Remediation:</strong>
-                  <span className="text-zinc-300">{v.remediation}</span>
-                </div>
-              </div>
-            );
-          })}
+      {/* 3. Sub-tabs: Anomalies vs PR Bot Comment */}
+      <div className="px-4 pt-2.5 pb-2 flex items-center justify-between border-b border-white/[0.06] bg-zinc-950/40">
+        <div className="flex items-center space-x-1 bg-zinc-900/80 p-0.5 rounded-lg border border-white/[0.06] text-[11px]">
+          <button
+            onClick={() => setActiveTab('violations')}
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-md transition-all ${
+              activeTab === 'violations'
+                ? 'bg-zinc-800 text-white font-medium shadow-sm'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            <AlertTriangle className="w-3 h-3 text-amber-400" />
+            <span>Violations ({violations.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('bot')}
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-md transition-all ${
+              activeTab === 'bot'
+                ? 'bg-zinc-800 text-white font-medium shadow-sm'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            <Bot className="w-3 h-3 text-indigo-400" />
+            <span>PR Review Bot</span>
+          </button>
         </div>
 
-        {/* GitHub PR Bot Comment Mockup & Sync Action */}
-        <div className="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-950">
-          <div className="p-2.5 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between text-xs">
-            <div className="flex items-center space-x-2">
-              <Bot className="w-4 h-4 text-indigo-400" />
-              <span className="font-semibold text-zinc-200">github-actions[bot]</span>
-              <span className="text-zinc-500 font-mono text-[11px]">commented just now</span>
-            </div>
-
-            <div className="flex items-center space-x-1.5">
-              <button
-                onClick={handleCopyReview}
-                className="flex items-center space-x-1 px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] border border-zinc-700 transition-colors"
-                title="Copy Markdown PR Comment"
-              >
-                {copiedReview ? (
-                  <>
-                    <Check className="w-3 h-3 text-emerald-400" />
-                    <span className="text-emerald-400">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3 h-3 text-zinc-400" />
-                    <span>Copy Markdown</span>
-                  </>
-                )}
-              </button>
-
-              {onOpenExport && (
-                <button
-                  onClick={onOpenExport}
-                  className="flex items-center space-x-1 px-2 py-0.5 rounded bg-indigo-600/30 hover:bg-indigo-600/40 text-indigo-300 text-[11px] border border-indigo-500/40 transition-colors"
-                  title="Open Full Export Modal"
-                >
-                  <Share2 className="w-3 h-3 text-indigo-400" />
-                  <span>Export</span>
-                </button>
+        {activeTab === 'bot' && (
+          <div className="flex items-center space-x-1.5">
+            <button
+              onClick={handleCopyReview}
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] border border-white/[0.06] transition-colors"
+              title="Copy Markdown PR Review"
+            >
+              {copiedReview ? (
+                <>
+                  <Check className="w-3 h-3 text-emerald-400" />
+                  <span className="text-emerald-400 font-medium">Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3 h-3 text-zinc-400" />
+                  <span>Copy</span>
+                </>
               )}
-            </div>
+            </button>
+            {onOpenExport && (
+              <button
+                onClick={onOpenExport}
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-[11px] border border-indigo-500/30 transition-colors"
+                title="Export Topology, Mermaid & Review"
+              >
+                <Share2 className="w-3 h-3 text-indigo-400" />
+                <span>Export</span>
+              </button>
+            )}
           </div>
+        )}
+      </div>
 
-          <div className="p-3 text-xs text-zinc-300 space-y-2">
-            <div className="font-semibold text-zinc-100 flex items-center gap-1.5">
-              <span>🏛️ ArchSense Architecture Guardrail Report</span>
+      {/* 4. Tab Content (Scrollable, Clean) */}
+      <div className="p-4 overflow-y-auto flex-1 space-y-3 font-sans text-xs">
+        {activeTab === 'violations' ? (
+          <>
+            {violations.length === 0 ? (
+              <div className="p-8 text-center flex flex-col items-center justify-center h-full">
+                <CheckCircle2 className="w-8 h-8 text-emerald-400 mb-2" />
+                <div className="text-sm font-semibold text-zinc-200">Zero Violations Found</div>
+                <p className="text-xs text-zinc-400 mt-1">PR conforms 100% to boundary contracts.</p>
+              </div>
+            ) : (
+              violations.map((v) => {
+                const isCompliant = v.severity === 'COMPLIANT';
+                return (
+                  <div
+                    key={v.id}
+                    className="p-3.5 rounded-xl border border-white/[0.06] bg-zinc-900/40 hover:border-white/[0.1] transition-all space-y-2.5"
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center space-x-1.5 font-semibold text-zinc-200">
+                        {isCompliant ? (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                        ) : (
+                          <AlertTriangle className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                        )}
+                        <span>{v.title}</span>
+                      </div>
+                      <span
+                        className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase ${
+                          isCompliant
+                            ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                            : 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+                        }`}
+                      >
+                        {v.severity}
+                      </span>
+                    </div>
+
+                    {/* File location */}
+                    <div className="flex items-center space-x-1.5 text-[11px] font-mono text-zinc-400">
+                      <FileCode className="w-3 h-3 text-zinc-500" />
+                      <span>{v.file}</span>
+                      <span className="text-zinc-600">·</span>
+                      <span className="text-indigo-400 font-semibold">{v.line}</span>
+                    </div>
+
+                    {/* Breach description */}
+                    <p className="text-zinc-300 text-xs leading-relaxed">
+                      {v.breachDescription}
+                    </p>
+
+                    {/* Remediation */}
+                    <div className="p-2.5 rounded-lg bg-zinc-950/70 border border-white/[0.05] text-[11px] leading-relaxed">
+                      <div className="flex items-center space-x-1 text-zinc-400 font-medium mb-1">
+                        <ArrowRight className="w-3 h-3 text-indigo-400" />
+                        <span>Remediation</span>
+                      </div>
+                      <div className="text-zinc-300">{v.remediation}</div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </>
+        ) : (
+          /* PR Bot Comment Tab */
+          <div className="border border-white/[0.08] rounded-xl overflow-hidden bg-zinc-950/80">
+            <div className="p-3 bg-zinc-900/60 border-b border-white/[0.06] flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-5 h-5 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
+                  <Bot className="w-3 h-3 text-indigo-400" />
+                </div>
+                <span className="font-semibold text-zinc-200 text-xs">github-actions[bot]</span>
+                <span className="text-zinc-500 font-mono text-[10px]">commented just now</span>
+              </div>
             </div>
-            <p className="text-[11px] text-zinc-400">
-              {isApproved
-                ? '✅ All code diffs strictly adhere to declared microservice boundaries. PR is cleared for merge.'
-                : '❌ Blocking Check Failed: 1 or more unauthorized architectural boundaries breached.'}
-            </p>
-            <div className="p-2 rounded bg-zinc-900 font-mono text-[10px] text-zinc-400 border border-zinc-800">
-              Audit Score: {score}/100 | Status: {status} | Engine: Meta SAM 3.1 + Muse Spark
+
+            <div className="p-4 space-y-3 text-xs text-zinc-300 leading-relaxed font-sans">
+              <div className="flex items-center space-x-2 font-semibold text-zinc-100">
+                <span>{isApproved ? '✅' : '❌'} ArchSense Architectural Governance Check</span>
+              </div>
+
+              <p className="text-zinc-400 text-xs">
+                {isApproved
+                  ? 'All changes strictly adhere to declared microservice boundaries. PR is cleared for automated merge.'
+                  : `Blocking Check Failed: ${violations.length} critical architectural boundary violation(s) detected.`}
+              </p>
+
+              <div className="p-2.5 rounded-lg bg-zinc-900/90 font-mono text-[11px] text-zinc-300 border border-white/[0.06] space-y-1">
+                <div>Audit Score: <span className="font-bold text-white">{score}/100</span></div>
+                <div>Decision: <span className="font-bold text-rose-400">{status}</span></div>
+                <div>Perception Engine: <span className="text-zinc-400">Meta SAM 3.1 + Muse Spark</span></div>
+              </div>
+
+              <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-zinc-500 font-mono">
+                <span>Automated review by ArchSense</span>
+                <span>Meta Global AI Hackathon</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
