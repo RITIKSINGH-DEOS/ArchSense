@@ -9,7 +9,7 @@ import { DiffInspector } from '../components/DiffInspector';
 import { AuditStation } from '../components/AuditStation';
 import { ExportModal } from '../components/ExportModal';
 import { SCENARIOS, AuditScenario, Violation, ArchitectureEdge } from '../data/mockScenarios';
-import { Info } from 'lucide-react';
+import { Sparkles, Layers, GitPullRequest, ShieldCheck } from 'lucide-react';
 
 export default function Home() {
   const [currentScenario, setCurrentScenario] = useState<AuditScenario>(SCENARIOS.scenarioA);
@@ -103,34 +103,73 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
       {/* 1. Header with Export Trigger */}
       <Header onOpenExport={() => setIsExportOpen(true)} />
 
-      {/* 2. Executive Metrics Callout Bar */}
+      {/* 2. Executive Metrics Ribbon (No scrollbar) */}
       <MetricsBar />
 
       {/* Main Studio Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-5">
-        {/* 3. 1-Click Evaluator Scenarios */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8">
+        {/* Evaluator Scenario Selector (Full Width Top Control) */}
         <ScenarioPicker
           currentScenarioId={currentScenario.id}
           onSelect={handleScenarioChange}
         />
 
-        {/* 4. Three-Column Evaluator Studio */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 items-start">
-          {/* Column A: Living Architecture Topology (5 cols) */}
-          <div className="lg:col-span-5 h-[480px]">
+        {/* ============================================================== */}
+        {/* STEP 01: Living Architecture Topology (Full Width) */}
+        {/* ============================================================== */}
+        <section className="flex flex-col gap-2.5">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center space-x-2.5">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/25">
+                STEP 01
+              </span>
+              <div className="flex items-center space-x-1.5">
+                <Layers className="w-4 h-4 text-indigo-400" />
+                <h2 className="text-sm font-semibold text-zinc-200 tracking-tight">
+                  Living Architecture Topology & Component Boundaries
+                </h2>
+              </div>
+            </div>
+            <span className="text-xs text-zinc-500 font-mono hidden sm:inline">
+              Meta SAM 3.1 Zero-Shot Segmentation Engine
+            </span>
+          </div>
+
+          <div className="w-full h-[480px]">
             <ArchitectureCanvas
               nodes={currentScenario.nodes}
               edges={edges}
               isAudited={isAudited}
             />
           </div>
+        </section>
 
-          {/* Column B: Git PR Code Diff (4 cols) */}
-          <div className="lg:col-span-4 h-[480px]">
+        {/* ============================================================== */}
+        {/* STEP 02: Pull Request Code Diff Inspector (Full Width) */}
+        {/* ============================================================== */}
+        <section className="flex flex-col gap-2.5">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center space-x-2.5">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
+                STEP 02
+              </span>
+              <div className="flex items-center space-x-1.5">
+                <GitPullRequest className="w-4 h-4 text-emerald-400" />
+                <h2 className="text-sm font-semibold text-zinc-200 tracking-tight">
+                  Git Pull Request Code Diff & Boundary Audit Trigger
+                </h2>
+              </div>
+            </div>
+            <span className="text-xs text-zinc-500 font-mono hidden sm:inline">
+              Live Unified Diff Editor · Semantic Code Reasoning
+            </span>
+          </div>
+
+          <div className="w-full">
             <DiffInspector
               prTitle={currentScenario.prTitle}
               prAuthor={currentScenario.prAuthor}
@@ -143,9 +182,30 @@ export default function Home() {
               onReset={handleReset}
             />
           </div>
+        </section>
 
-          {/* Column C: Real-Time Audit Station (3 cols) */}
-          <div className="lg:col-span-3 h-[480px]">
+        {/* ============================================================== */}
+        {/* STEP 03: Architectural Governance & Audit Station (Full Width) */}
+        {/* ============================================================== */}
+        <section className="flex flex-col gap-2.5">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center space-x-2.5">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/25">
+                STEP 03
+              </span>
+              <div className="flex items-center space-x-1.5">
+                <ShieldCheck className="w-4 h-4 text-rose-400" />
+                <h2 className="text-sm font-semibold text-zinc-200 tracking-tight">
+                  Real-Time Architectural Governance Decision & Policy Gate
+                </h2>
+              </div>
+            </div>
+            <span className="text-xs text-zinc-500 font-mono hidden sm:inline">
+              Deterministic Pydantic Air-Gapped Verification
+            </span>
+          </div>
+
+          <div className="w-full">
             <AuditStation
               score={score}
               status={status}
@@ -155,26 +215,26 @@ export default function Home() {
               onOpenExport={() => setIsExportOpen(true)}
             />
           </div>
-        </div>
+        </section>
 
-        {/* 5. Evaluator Context Banner */}
-        <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
-          <div className="flex items-center space-x-2">
-            <Info className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+        {/* Evaluator Context Banner */}
+        <div className="p-4 rounded-2xl bg-zinc-950/40 border border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-zinc-400 gap-3">
+          <div className="flex items-center space-x-2.5">
+            <Sparkles className="w-4 h-4 text-indigo-400 flex-shrink-0" />
             <span>
-              <strong>Evaluator Note:</strong> Built for zero-hardware evaluation at the Meta Global AI Developer Hackathon.
-              Demonstrates Meta SAM 3.1 visual node segmentation coupled with Meta Model API (Muse Spark) semantic code reasoning.
+              <strong className="text-zinc-200">Evaluator Note:</strong> Built for zero-hardware evaluation at the Meta Global AI Developer Hackathon.
+              Combines Meta SAM 3.1 visual segmentation with Meta Model API (Muse Spark) semantic code reasoning.
             </span>
           </div>
-          <div className="hidden sm:flex items-center space-x-2 text-[11px] text-zinc-500 font-mono">
-            <span>Branch: feat/export-sync</span>
+          <div className="flex items-center space-x-2 text-[11px] text-zinc-500 font-mono flex-shrink-0">
+            <span className="text-emerald-400">● Engine Active</span>
             <span>·</span>
             <span>Living Sync: Mermaid / JSON / PR Markdown</span>
           </div>
         </div>
       </main>
 
-      {/* 6. Living Topology & PR Export Modal */}
+      {/* Living Topology & PR Export Modal */}
       <ExportModal
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
