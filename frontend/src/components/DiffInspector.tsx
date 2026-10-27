@@ -1,13 +1,14 @@
 'use client';
 
-import React from 'react';
-import { GitPullRequest, GitBranch, User, Play, Sparkles, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { GitPullRequest, GitBranch, User, Sparkles, RefreshCw, Edit3, Eye } from 'lucide-react';
 
 interface Props {
   prTitle: string;
   prAuthor: string;
   prBranch: string;
   diffCode: string;
+  onDiffChange: (newDiff: string) => void;
   onAudit: () => void;
   isAuditing: boolean;
   isAudited: boolean;
@@ -19,11 +20,14 @@ export const DiffInspector: React.FC<Props> = ({
   prAuthor,
   prBranch,
   diffCode,
+  onDiffChange,
   onAudit,
   isAuditing,
   isAudited,
   onReset,
 }) => {
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+
   return (
     <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl overflow-hidden flex flex-col h-full shadow-lg">
       {/* Header */}
@@ -33,7 +37,29 @@ export const DiffInspector: React.FC<Props> = ({
           <span className="text-sm font-semibold text-zinc-200">GitHub Pull Request Diff</span>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1.5">
+          {/* Toggle between View & Edit mode */}
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            className={`flex items-center space-x-1 text-xs px-2.5 py-1 rounded-md border transition-colors ${
+              isEditMode
+                ? 'bg-amber-950/60 border-amber-700/50 text-amber-300'
+                : 'bg-zinc-800 hover:bg-zinc-700 border-zinc-700 text-zinc-300'
+            }`}
+          >
+            {isEditMode ? (
+              <>
+                <Eye className="w-3.5 h-3.5" />
+                <span>View Mode</span>
+              </>
+            ) : (
+              <>
+                <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                <span>Edit / Paste Diff</span>
+              </>
+            )}
+          </button>
+
           <button
             onClick={onReset}
             className="p-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors"
@@ -59,27 +85,45 @@ export const DiffInspector: React.FC<Props> = ({
             <GitBranch className="w-3 h-3 text-zinc-500" />
             {prBranch}
           </span>
+          {isEditMode && (
+            <span className="text-amber-400 font-mono text-[10px] ml-auto">
+              ● Custom Edit Active
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Diff Code Viewer */}
-      <div className="flex-1 bg-zinc-950 p-3 font-mono text-xs overflow-auto max-h-[300px]">
-        {diffCode.split('\n').map((line, idx) => {
-          let bg = 'text-zinc-400';
-          if (line.startsWith('+') && !line.startsWith('+++')) {
-            bg = 'bg-emerald-950/40 text-emerald-300 border-l-2 border-emerald-500 pl-1';
-          } else if (line.startsWith('-') && !line.startsWith('---')) {
-            bg = 'bg-rose-950/40 text-rose-300 border-l-2 border-rose-500 pl-1 opacity-70';
-          } else if (line.startsWith('@@')) {
-            bg = 'text-indigo-400 font-semibold bg-indigo-950/30';
-          }
+      {/* Diff Content Area */}
+      <div className="flex-1 bg-zinc-950 font-mono text-xs overflow-auto max-h-[300px]">
+        {isEditMode ? (
+          <div className="p-2 h-full flex flex-col">
+            <textarea
+              value={diffCode}
+              onChange={(e) => onDiffChange(e.target.value)}
+              placeholder="Paste any unified Git diff here (e.g. + import { Client } from 'pg')..."
+              className="w-full h-full min-h-[260px] p-2.5 bg-zinc-900 text-zinc-200 font-mono text-xs rounded-lg border border-zinc-700 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 leading-relaxed resize-none"
+            />
+          </div>
+        ) : (
+          <div className="p-3">
+            {diffCode.split('\n').map((line, idx) => {
+              let bg = 'text-zinc-400';
+              if (line.startsWith('+') && !line.startsWith('+++')) {
+                bg = 'bg-emerald-950/40 text-emerald-300 border-l-2 border-emerald-500 pl-1';
+              } else if (line.startsWith('-') && !line.startsWith('---')) {
+                bg = 'bg-rose-950/40 text-rose-300 border-l-2 border-rose-500 pl-1 opacity-70';
+              } else if (line.startsWith('@@')) {
+                bg = 'text-indigo-400 font-semibold bg-indigo-950/30';
+              }
 
-          return (
-            <div key={idx} className={`py-0.5 leading-relaxed ${bg}`}>
-              {line || ' '}
-            </div>
-          );
-        })}
+              return (
+                <div key={idx} className={`py-0.5 leading-relaxed ${bg}`}>
+                  {line || ' '}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Run Audit CTA button */}
@@ -96,7 +140,7 @@ export const DiffInspector: React.FC<Props> = ({
           {isAuditing ? (
             <>
               <RefreshCw className="w-4 h-4 animate-spin text-white" />
-              <span>Analyzing with Meta SAM 3.1 & Muse Spark...</span>
+              <span>Auditing custom diff with Meta SAM 3.1 & Muse Spark...</span>
             </>
           ) : (
             <>
