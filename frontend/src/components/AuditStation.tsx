@@ -14,7 +14,6 @@ import {
   Check,
   Share2,
   ArrowRight,
-  ExternalLink,
 } from 'lucide-react';
 
 interface Props {
@@ -39,7 +38,7 @@ export const AuditStation: React.FC<Props> = ({
 
   if (!isAudited && !isAuditing) {
     return (
-      <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl p-10 flex flex-col items-center justify-center text-center w-full min-h-[260px] shadow-2xl shadow-black/40 backdrop-blur-xl">
+      <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl p-10 flex flex-col items-center justify-center text-center w-full min-h-[260px] shadow-2xl shadow-black/40 backdrop-blur-xl transition-all duration-300">
         <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-white/[0.08] flex items-center justify-center text-zinc-500 mb-3 shadow-inner">
           <ShieldAlert className="w-7 h-7 text-zinc-400" />
         </div>
@@ -82,14 +81,14 @@ export const AuditStation: React.FC<Props> = ({
   };
 
   return (
-    <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl overflow-hidden flex flex-col w-full shadow-2xl shadow-black/60 backdrop-blur-xl">
+    <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl overflow-hidden flex flex-col w-full shadow-2xl shadow-black/60 backdrop-blur-xl transition-all duration-300">
       {/* 1. Header Toolbar */}
       <div className="px-5 py-3.5 border-b border-white/[0.06] flex items-center justify-between bg-zinc-950/60">
         <div className="flex items-center space-x-2.5">
           {isApproved ? (
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <ShieldCheck className="w-5 h-5 text-emerald-400 transition-transform duration-200" />
           ) : (
-            <ShieldAlert className="w-5 h-5 text-rose-400" />
+            <ShieldAlert className="w-5 h-5 text-rose-400 transition-transform duration-200" />
           )}
           <div>
             <h3 className="text-sm font-semibold text-zinc-200 tracking-tight">Audit Decision Station</h3>
@@ -99,7 +98,7 @@ export const AuditStation: React.FC<Props> = ({
 
         <div className="flex items-center space-x-3">
           <span
-            className={`text-xs font-mono font-bold px-3 py-1 rounded-full border flex items-center gap-2 ${badgeBorder}`}
+            className={`text-xs font-mono font-bold px-3 py-1 rounded-full border flex items-center gap-2 transition-all duration-300 ${badgeBorder}`}
           >
             <span
               className={`w-2 h-2 rounded-full ${
@@ -115,13 +114,13 @@ export const AuditStation: React.FC<Props> = ({
       <div className="px-5 py-4 bg-zinc-900/40 border-b border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-baseline space-x-3">
           <div className="text-xs text-zinc-400 font-medium">Integrity Score:</div>
-          <span className={`text-3xl font-black tracking-tight ${statusColor}`}>
+          <span className={`text-3xl font-black tracking-tight transition-colors duration-300 ${statusColor}`}>
             {score}
           </span>
           <span className="text-xs text-zinc-500 font-mono">/ 100</span>
           <div className="w-32 sm:w-48 h-1.5 bg-zinc-800 rounded-full overflow-hidden ml-3 inline-block">
             <div
-              className={`h-full transition-all duration-500 ${progressBarColor}`}
+              className={`h-full transition-all duration-700 ease-out ${progressBarColor}`}
               style={{ width: `${Math.max(score, 4)}%` }}
             />
           </div>
@@ -130,7 +129,7 @@ export const AuditStation: React.FC<Props> = ({
         <div className="flex items-center space-x-4 text-xs font-mono text-zinc-400">
           <div className="flex items-center gap-1.5">
             <Lock className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="text-zinc-300 font-semibold">
+            <span className="text-zinc-300 font-semibold transition-all duration-200">
               {isApproved ? '0 Violations Blocked' : `${violations.length} Critical Violations`}
             </span>
           </div>
@@ -144,7 +143,7 @@ export const AuditStation: React.FC<Props> = ({
         <div className="flex items-center space-x-1.5 bg-zinc-900/80 p-1 rounded-xl border border-white/[0.06] text-xs">
           <button
             onClick={() => setActiveTab('violations')}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-200 ${
               activeTab === 'violations'
                 ? 'bg-zinc-800 text-white font-medium shadow-sm'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -155,7 +154,7 @@ export const AuditStation: React.FC<Props> = ({
           </button>
           <button
             onClick={() => setActiveTab('bot')}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-200 ${
               activeTab === 'bot'
                 ? 'bg-zinc-800 text-white font-medium shadow-sm'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -170,7 +169,7 @@ export const AuditStation: React.FC<Props> = ({
           {activeTab === 'bot' && (
             <button
               onClick={handleCopyReview}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs border border-white/[0.06] transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs border border-white/[0.06] transition-colors duration-200"
               title="Copy Markdown PR Review"
             >
               {copiedReview ? (
@@ -190,7 +189,7 @@ export const AuditStation: React.FC<Props> = ({
           {onOpenExport && (
             <button
               onClick={onOpenExport}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-xs border border-indigo-500/30 transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-xs border border-indigo-500/30 transition-colors duration-200"
               title="Export Full Topology & PR Sync"
             >
               <Share2 className="w-3.5 h-3.5 text-indigo-400" />
@@ -200,10 +199,10 @@ export const AuditStation: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* 4. Tab Content */}
-      <div className="p-5">
+      {/* 4. Tab Content (With min-height to prevent vertical shift & animate-fade-in) */}
+      <div className="p-5 min-h-[260px] flex flex-col justify-start">
         {activeTab === 'violations' ? (
-          <>
+          <div className="animate-fade-in w-full">
             {violations.length === 0 ? (
               <div className="p-10 text-center flex flex-col items-center justify-center">
                 <CheckCircle2 className="w-10 h-10 text-emerald-400 mb-2" />
@@ -213,14 +212,14 @@ export const AuditStation: React.FC<Props> = ({
                 </p>
               </div>
             ) : (
-              /* Spacious 2-Column Responsive Grid for Full Width */
+              /* Spacious 2-Column Responsive Grid */
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {violations.map((v) => {
                   const isCompliant = v.severity === 'COMPLIANT';
                   return (
                     <div
                       key={v.id}
-                      className="p-4 rounded-xl border border-white/[0.06] bg-zinc-900/40 hover:border-white/[0.12] transition-all space-y-3 flex flex-col justify-between"
+                      className="p-4 rounded-xl border border-white/[0.06] bg-zinc-900/40 hover:border-white/[0.12] transition-all duration-200 space-y-3 flex flex-col justify-between"
                     >
                       <div className="space-y-2">
                         {/* Title & Badge */}
@@ -271,10 +270,10 @@ export const AuditStation: React.FC<Props> = ({
                 })}
               </div>
             )}
-          </>
+          </div>
         ) : (
           /* GitHub PR Bot Comment Tab */
-          <div className="border border-white/[0.08] rounded-xl overflow-hidden bg-zinc-950/80">
+          <div className="border border-white/[0.08] rounded-xl overflow-hidden bg-zinc-950/80 animate-fade-in w-full">
             <div className="p-3 bg-zinc-900/60 border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-6 h-6 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">

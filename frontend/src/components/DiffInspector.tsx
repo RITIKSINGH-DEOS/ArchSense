@@ -29,7 +29,7 @@ export const DiffInspector: React.FC<Props> = ({
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   return (
-    <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl overflow-hidden flex flex-col w-full shadow-2xl shadow-black/60 backdrop-blur-xl">
+    <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl overflow-hidden flex flex-col w-full shadow-2xl shadow-black/60 backdrop-blur-xl transition-all duration-300">
       {/* Header Toolbar */}
       <div className="px-5 py-3.5 border-b border-white/[0.06] bg-zinc-950/60 flex items-center justify-between">
         <div className="flex items-center space-x-2.5">
@@ -43,7 +43,7 @@ export const DiffInspector: React.FC<Props> = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsEditMode(!isEditMode)}
-            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all ${
+            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all duration-200 ${
               isEditMode
                 ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 font-medium'
                 : 'bg-zinc-900 border-white/[0.06] text-zinc-400 hover:text-zinc-200'
@@ -64,7 +64,7 @@ export const DiffInspector: React.FC<Props> = ({
 
           <button
             onClick={onReset}
-            className="p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-colors border border-white/[0.06]"
+            className="p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-colors duration-200 border border-white/[0.06]"
             title="Reset to scenario default"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -89,26 +89,26 @@ export const DiffInspector: React.FC<Props> = ({
             <span className="text-indigo-400">{prBranch}</span>
           </span>
           {isEditMode && (
-            <span className="text-amber-400 text-[11px] font-semibold">
+            <span className="text-amber-400 text-[11px] font-semibold animate-pulse">
               ● Edit Mode
             </span>
           )}
         </div>
       </div>
 
-      {/* Diff Content Area */}
-      <div className="bg-black/70 font-mono text-xs overflow-auto max-h-[380px]">
+      {/* Diff Content Area (Strict fixed height to prevent ANY layout shift) */}
+      <div className="bg-black/70 font-mono text-xs overflow-y-auto h-[340px]">
         {isEditMode ? (
-          <div className="p-4">
+          <div className="p-4 h-full animate-fade-in">
             <textarea
               value={diffCode}
               onChange={(e) => onDiffChange(e.target.value)}
               placeholder="Paste any unified Git diff here..."
-              className="w-full h-72 p-4 bg-zinc-900/60 text-zinc-200 font-mono text-xs rounded-xl border border-white/[0.08] focus:outline-none focus:border-indigo-500/60 leading-relaxed resize-none"
+              className="w-full h-full p-4 bg-zinc-900/60 text-zinc-200 font-mono text-xs rounded-xl border border-white/[0.08] focus:outline-none focus:border-indigo-500/60 leading-relaxed resize-none transition-all duration-200"
             />
           </div>
         ) : (
-          <div className="p-4 space-y-0.5">
+          <div className="p-4 space-y-0.5 animate-fade-in">
             {diffCode.split('\n').map((line, idx) => {
               let bg = 'text-zinc-400';
               if (line.startsWith('+') && !line.startsWith('+++')) {
@@ -120,7 +120,7 @@ export const DiffInspector: React.FC<Props> = ({
               }
 
               return (
-                <div key={idx} className={`py-1 px-2 font-mono leading-relaxed rounded-sm ${bg}`}>
+                <div key={idx} className={`py-1 px-2 font-mono leading-relaxed rounded-sm ${bg} transition-colors duration-150`}>
                   {line || ' '}
                 </div>
               );
@@ -134,7 +134,7 @@ export const DiffInspector: React.FC<Props> = ({
         <button
           onClick={onAudit}
           disabled={isAuditing}
-          className={`w-full py-3 px-5 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center space-x-2.5 transition-all shadow-xl ${
+          className={`w-full py-3 px-5 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center space-x-2.5 transition-all duration-200 shadow-xl ${
             isAuditing
               ? 'bg-indigo-700/80 text-white opacity-80 cursor-wait'
               : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white shadow-indigo-500/25 active:scale-[0.99]'

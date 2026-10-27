@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { ArchitectureNode, ArchitectureEdge } from '../data/mockScenarios';
-import { Layers, Scan, UploadCloud, X, Sparkles, Sliders } from 'lucide-react';
+import { Layers, Scan, UploadCloud, X, Sparkles } from 'lucide-react';
 
 interface Props {
   nodes: ArchitectureNode[];
@@ -13,8 +13,8 @@ interface Props {
 export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited }) => {
   const [selectedNode, setSelectedNode] = useState<ArchitectureNode | null>(null);
   const [showSamMasks, setShowSamMasks] = useState<boolean>(true);
-  const [customImage, setCustomImage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'graph' | 'upload'>('graph');
+  const [customImage, setCustomImage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,13 +38,13 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
   };
 
   return (
-    <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl overflow-hidden flex flex-col h-full shadow-2xl shadow-black/60 backdrop-blur-xl">
+    <div className="bg-zinc-950/70 border border-white/[0.08] rounded-2xl overflow-hidden flex flex-col h-full shadow-2xl shadow-black/60 backdrop-blur-xl transition-all duration-300">
       {/* Sleek Toolbar */}
       <div className="px-4 py-3 border-b border-white/[0.06] flex items-center justify-between bg-zinc-950/60">
         <div className="flex items-center space-x-1 bg-zinc-900/80 p-1 rounded-xl border border-white/[0.06] text-xs">
           <button
             onClick={() => setActiveTab('graph')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all duration-200 ${
               activeTab === 'graph'
                 ? 'bg-zinc-800 text-white font-medium shadow-sm'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -55,7 +55,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           </button>
           <button
             onClick={() => setActiveTab('upload')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all ${
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all duration-200 ${
               activeTab === 'upload'
                 ? 'bg-zinc-800 text-white font-medium shadow-sm'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -70,7 +70,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setShowSamMasks(!showSamMasks)}
-            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all ${
+            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all duration-200 ${
               showSamMasks
                 ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300 font-medium'
                 : 'bg-zinc-900 border-white/[0.06] text-zinc-400 hover:text-zinc-200'
@@ -84,7 +84,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
 
       {/* Main Canvas Area */}
       {activeTab === 'graph' ? (
-        <div className="relative flex-1 bg-gradient-to-b from-zinc-950/50 to-black/80 flex items-center justify-center min-h-[440px] p-6 select-none overflow-hidden">
+        <div className="relative flex-1 bg-gradient-to-b from-zinc-950/50 to-black/80 flex items-center justify-center min-h-[440px] p-6 select-none overflow-hidden animate-fade-in">
           {/* Subtle grid pattern */}
           <div
             className="absolute inset-0 opacity-10 pointer-events-none"
@@ -147,7 +147,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                     strokeDasharray={isViolated ? '6 4' : 'none'}
                     markerEnd={markerId}
                     opacity={isViolated ? 1 : 0.75}
-                    className={isViolated ? 'animate-pulse' : 'transition-opacity group-hover:opacity-100'}
+                    className={isViolated ? 'animate-pulse' : 'transition-opacity duration-200 group-hover:opacity-100'}
                   />
                   <rect
                     x={midX - 28}
@@ -158,6 +158,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                     fill={isViolated ? '#450a0a' : '#18181b'}
                     stroke={isViolated ? '#dc2626' : '#27272a'}
                     strokeWidth="1"
+                    className="transition-colors duration-200"
                   />
                   <text
                     x={midX}
@@ -181,7 +182,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                 <g
                   key={node.id}
                   onClick={() => setSelectedNode(node)}
-                  className="cursor-pointer transition-transform hover:scale-[1.02]"
+                  className="cursor-pointer transition-transform duration-200 hover:scale-[1.02]"
                 >
                   {showSamMasks && (
                     <rect
@@ -206,7 +207,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                     fill="#121215"
                     stroke={isSelected ? '#818CF8' : '#27272a'}
                     strokeWidth={isSelected ? 1.8 : 1}
-                    className="filter drop-shadow-xl"
+                    className="filter drop-shadow-xl transition-colors duration-200"
                   />
                   <rect
                     x={node.x}
@@ -252,10 +253,10 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
-          className="relative flex-1 bg-gradient-to-b from-zinc-950/60 to-black/90 p-6 flex flex-col items-center justify-center min-h-[440px]"
+          className="relative flex-1 bg-gradient-to-b from-zinc-950/60 to-black/90 p-6 flex flex-col items-center justify-center min-h-[440px] animate-fade-in"
         >
           {customImage ? (
-            <div className="relative w-full h-full flex flex-col items-center justify-center">
+            <div className="relative w-full h-full flex flex-col items-center justify-center animate-fade-in">
               <div className="relative max-w-full max-h-[300px] rounded-xl overflow-hidden border border-white/[0.08] shadow-2xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -287,7 +288,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                 </div>
                 <button
                   onClick={() => setCustomImage(null)}
-                  className="flex items-center space-x-1 px-3 py-1 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 transition-colors border border-white/[0.06]"
+                  className="flex items-center space-x-1 px-3 py-1 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 transition-colors duration-200 border border-white/[0.06]"
                 >
                   <X className="w-3.5 h-3.5" />
                   <span>Remove Image</span>
@@ -297,7 +298,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           ) : (
             <div
               onClick={() => fileInputRef.current?.click()}
-              className={`w-full max-w-md p-10 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
+              className={`w-full max-w-md p-10 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
                 isDragging
                   ? 'border-indigo-500 bg-indigo-950/20 shadow-2xl'
                   : 'border-white/[0.08] hover:border-zinc-700 bg-zinc-900/30'
@@ -333,7 +334,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
 
       {/* Selected Node Drawer */}
       {selectedNode && activeTab === 'graph' && (
-        <div className="px-4 py-2.5 border-t border-white/[0.06] bg-zinc-950 flex items-center justify-between text-xs">
+        <div className="px-4 py-2.5 border-t border-white/[0.06] bg-zinc-950 flex items-center justify-between text-xs animate-fade-in transition-all duration-200">
           <div className="flex items-center space-x-2">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: selectedNode.color }}></span>
             <span className="font-semibold text-zinc-200">{selectedNode.label}</span>
