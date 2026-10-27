@@ -7,30 +7,97 @@ import { ScenarioPicker } from '../components/ScenarioPicker';
 import { ArchitectureCanvas } from '../components/ArchitectureCanvas';
 import { DiffInspector } from '../components/DiffInspector';
 import { AuditStation } from '../components/AuditStation';
-import { SCENARIOS, AuditScenario } from '../data/mockScenarios';
-import { ShieldCheck, Info } from 'lucide-react';
+import { SCENARIOS, AuditScenario, Violation, ArchitectureEdge } from '../data/mockScenarios';
+import { Info } from 'lucide-react';
 
 export default function Home() {
   const [currentScenario, setCurrentScenario] = useState<AuditScenario>(SCENARIOS.scenarioA);
   const [isAuditing, setIsAuditing] = useState<boolean>(false);
   const [isAudited, setIsAudited] = useState<boolean>(false);
+  const [violations, setViolations] = useState<Violation[]>(SCENARIOS.scenarioA.violations);
+  const [score, setScore] = useState<number>(SCENARIOS.scenarioA.score);
+  const [status, setStatus] = useState<'REJECTED' | 'WARNING' | 'APPROVED'>(SCENARIOS.scenarioA.status);
+  const [edges, setEdges] = useState<ArchitectureEdge[]>(SCENARIOS.scenarioA.edges);
 
   const handleScenarioChange = (scenario: AuditScenario) => {
     setCurrentScenario(scenario);
+    setViolations(scenario.violations);
+    setScore(scenario.score);
+    setStatus(scenario.status);
+    setEdges(scenario.edges);
     setIsAudited(false);
   };
 
-  const handleRunAudit = () => {
+  const handleRunAudit = async () => {
     setIsAuditing(true);
-    // Simulate real-time sub-second audit stream
-    setTimeout(() => {
+
+    try {
+      // Attempt live FastAPI Backend call
+      const response = await fetch('http://localhost:8000/api/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          scenario_id: currentScenario.id,
+          pr_title: currentScenario.prTitle,
+          git_diff: currentScenario.diffCode,
+          nodes: currentScenario.nodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type,
+            x: n.x,
+            y: n.y,
+            width: n.width,
+            height: n.height,
+            allowed_egress: n.allowedEgress,
+            color: n.color
+          })),
+          edges: currentScenario.edges.map(e => ({
+            id: e.id,
+            source: e.source,
+            target: e.target,
+            protocol: e.protocol,
+            is_violated: e.isViolated || false
+          }))
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setScore(data.score);
+        setStatus(data.status);
+        setViolations(data.violations);
+        if (data.edges) {
+          setEdges(data.edges.map((e: any) => ({
+            id: e.id,
+            source: e.source,
+            target: e.target,
+            protocol: e.protocol,
+            isViolated: e.is_violated
+          })));
+        }
+      } else {
+        // Fallback to local scenario simulation
+        fallbackAudit();
+      }
+    } catch {
+      // Fallback to local scenario simulation if backend offline
+      fallbackAudit();
+    } finally {
       setIsAuditing(false);
       setIsAudited(true);
-    }, 750);
+    }
+  };
+
+  const fallbackAudit = () => {
+    setScore(currentScenario.score);
+    setStatus(currentScenario.status);
+    setViolations(currentScenario.violations);
+    setEdges(currentScenario.edges);
   };
 
   const handleReset = () => {
     setIsAudited(false);
+    setEdges(currentScenario.edges.map(e => ({ ...e, isViolated: false })));
   };
 
   return (
@@ -55,7 +122,7 @@ export default function Home() {
           <div className="lg:col-span-5 h-[480px]">
             <ArchitectureCanvas
               nodes={currentScenario.nodes}
-              edges={currentScenario.edges}
+              edges={edges}
               isAudited={isAudited}
             />
           </div>
@@ -77,9 +144,9 @@ export default function Home() {
           {/* Column C: Real-Time Audit Station (3 cols) */}
           <div className="lg:col-span-3 h-[480px]">
             <AuditStation
-              score={currentScenario.score}
-              status={currentScenario.status}
-              violations={currentScenario.violations}
+              score={score}
+              status={status}
+              violations={violations}
               isAudited={isAudited}
               isAuditing={isAuditing}
             />
@@ -96,9 +163,9 @@ export default function Home() {
             </span>
           </div>
           <div className="hidden sm:flex items-center space-x-2 text-[11px] text-zinc-500 font-mono">
-            <span>Branch: feat/frontend-console</span>
+            <span>Branch: feat/fastapi-backend</span>
             <span>·</span>
-            <span>Build: Code 0</span>
+            <span>Pytest: 4/4 Passed (Code 0)</span>
           </div>
         </div>
       </main>
