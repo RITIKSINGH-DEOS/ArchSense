@@ -7,6 +7,7 @@ import { ScenarioPicker } from '../components/ScenarioPicker';
 import { ArchitectureCanvas } from '../components/ArchitectureCanvas';
 import { DiffInspector } from '../components/DiffInspector';
 import { AuditStation } from '../components/AuditStation';
+import { ExportModal } from '../components/ExportModal';
 import { SCENARIOS, AuditScenario, Violation, ArchitectureEdge } from '../data/mockScenarios';
 import { Info } from 'lucide-react';
 
@@ -19,6 +20,7 @@ export default function Home() {
   const [score, setScore] = useState<number>(SCENARIOS.scenarioA.score);
   const [status, setStatus] = useState<'REJECTED' | 'WARNING' | 'APPROVED'>(SCENARIOS.scenarioA.status);
   const [edges, setEdges] = useState<ArchitectureEdge[]>(SCENARIOS.scenarioA.edges);
+  const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
 
   const handleScenarioChange = (scenario: AuditScenario) => {
     setCurrentScenario(scenario);
@@ -34,7 +36,6 @@ export default function Home() {
     setIsAuditing(true);
 
     try {
-      // Live FastAPI Backend call with custom or scenario diff
       const response = await fetch('http://localhost:8000/api/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -103,8 +104,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
-      {/* 1. Header */}
-      <Header />
+      {/* 1. Header with Export Trigger */}
+      <Header onOpenExport={() => setIsExportOpen(true)} />
 
       {/* 2. Executive Metrics Callout Bar */}
       <MetricsBar />
@@ -151,6 +152,7 @@ export default function Home() {
               violations={violations}
               isAudited={isAudited}
               isAuditing={isAuditing}
+              onOpenExport={() => setIsExportOpen(true)}
             />
           </div>
         </div>
@@ -165,12 +167,24 @@ export default function Home() {
             </span>
           </div>
           <div className="hidden sm:flex items-center space-x-2 text-[11px] text-zinc-500 font-mono">
-            <span>Branch: feat/custom-input</span>
+            <span>Branch: feat/export-sync</span>
             <span>·</span>
-            <span>Custom Diagram & Diff Active</span>
+            <span>Living Sync: Mermaid / JSON / PR Markdown</span>
           </div>
         </div>
       </main>
+
+      {/* 6. Living Topology & PR Export Modal */}
+      <ExportModal
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        nodes={currentScenario.nodes}
+        edges={edges}
+        score={score}
+        status={status}
+        violations={violations}
+        prTitle={currentScenario.prTitle}
+      />
     </div>
   );
 }

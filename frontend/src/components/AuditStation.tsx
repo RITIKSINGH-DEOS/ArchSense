@@ -1,16 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Violation } from '../data/mockScenarios';
 import {
   ShieldAlert,
   ShieldCheck,
   AlertTriangle,
   FileCode,
-  ArrowRight,
   Bot,
   CheckCircle2,
   Lock,
+  Copy,
+  Check,
+  Share2,
 } from 'lucide-react';
 
 interface Props {
@@ -19,6 +21,7 @@ interface Props {
   violations: Violation[];
   isAudited: boolean;
   isAuditing: boolean;
+  onOpenExport?: () => void;
 }
 
 export const AuditStation: React.FC<Props> = ({
@@ -27,7 +30,10 @@ export const AuditStation: React.FC<Props> = ({
   violations,
   isAudited,
   isAuditing,
+  onOpenExport,
 }) => {
+  const [copiedReview, setCopiedReview] = useState<boolean>(false);
+
   if (!isAudited && !isAuditing) {
     return (
       <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl p-8 flex flex-col items-center justify-center text-center h-full min-h-[300px]">
@@ -48,6 +54,26 @@ export const AuditStation: React.FC<Props> = ({
   const badgeBg = isApproved
     ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/40'
     : 'bg-rose-950/60 text-rose-400 border-rose-800/40';
+
+  const handleCopyReview = () => {
+    let md = `## ${isApproved ? '✅' : '❌'} ArchSense Architectural Governance Check: **${status}** (${score}/100)\n\n`;
+    if (isApproved) {
+      md += `### ✅ Clean Boundary Clearance\nAll code changes strictly conform to declared microservice boundaries.\n`;
+    } else {
+      md += `### ⚠️ Detected Architectural Anomalies (${violations.length})\n\n`;
+      violations.forEach((v, idx) => {
+        md += `#### ${idx + 1}. **${v.title}** (\`${v.severity}\`)\n`;
+        md += `- **Location**: \`${v.file}\` (${v.line})\n`;
+        md += `- **Breach**: ${v.breachDescription}\n`;
+        md += `- **Remediation**: ${v.remediation}\n\n`;
+      });
+    }
+    md += `\n*Automated review by ArchSense · Meta Global AI Hackathon*`;
+
+    navigator.clipboard.writeText(md);
+    setCopiedReview(true);
+    setTimeout(() => setCopiedReview(false), 2000);
+  };
 
   return (
     <div className="bg-zinc-900/70 border border-zinc-800 rounded-xl overflow-hidden flex flex-col h-full shadow-lg">
@@ -146,12 +172,45 @@ export const AuditStation: React.FC<Props> = ({
           })}
         </div>
 
-        {/* GitHub PR Bot Comment Mockup */}
+        {/* GitHub PR Bot Comment Mockup & Sync Action */}
         <div className="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-950">
-          <div className="p-2.5 bg-zinc-900/90 border-b border-zinc-800 flex items-center space-x-2 text-xs">
-            <Bot className="w-4 h-4 text-indigo-400" />
-            <span className="font-semibold text-zinc-200">github-actions[bot]</span>
-            <span className="text-zinc-500 font-mono text-[11px]">commented just now</span>
+          <div className="p-2.5 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between text-xs">
+            <div className="flex items-center space-x-2">
+              <Bot className="w-4 h-4 text-indigo-400" />
+              <span className="font-semibold text-zinc-200">github-actions[bot]</span>
+              <span className="text-zinc-500 font-mono text-[11px]">commented just now</span>
+            </div>
+
+            <div className="flex items-center space-x-1.5">
+              <button
+                onClick={handleCopyReview}
+                className="flex items-center space-x-1 px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] border border-zinc-700 transition-colors"
+                title="Copy Markdown PR Comment"
+              >
+                {copiedReview ? (
+                  <>
+                    <Check className="w-3 h-3 text-emerald-400" />
+                    <span className="text-emerald-400">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3 h-3 text-zinc-400" />
+                    <span>Copy Markdown</span>
+                  </>
+                )}
+              </button>
+
+              {onOpenExport && (
+                <button
+                  onClick={onOpenExport}
+                  className="flex items-center space-x-1 px-2 py-0.5 rounded bg-indigo-600/30 hover:bg-indigo-600/40 text-indigo-300 text-[11px] border border-indigo-500/40 transition-colors"
+                  title="Open Full Export Modal"
+                >
+                  <Share2 className="w-3 h-3 text-indigo-400" />
+                  <span>Export</span>
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="p-3 text-xs text-zinc-300 space-y-2">
