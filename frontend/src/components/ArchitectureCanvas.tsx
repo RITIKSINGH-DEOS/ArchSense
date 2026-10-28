@@ -40,29 +40,29 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
   return (
     <div className="glass-panel rounded-3xl overflow-hidden flex flex-col h-full shadow-2xl transition-all duration-300">
       {/* Sleek Toolbar */}
-      <div className="px-5 py-3.5 border-b border-stone-800/80 flex items-center justify-between bg-stone-950/60 backdrop-blur-xl">
-        <div className="flex items-center space-x-1.5 bg-stone-950/90 p-1 rounded-2xl border border-stone-800/80 text-xs">
+      <div className="px-5 py-3 border-b border-stone-800/80 flex items-center justify-between bg-stone-950/60 backdrop-blur-xl">
+        <div className="flex items-center space-x-1.5 bg-stone-950/90 p-1 rounded-xl border border-stone-800/80 text-xs">
           <button
             onClick={() => setActiveTab('graph')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all duration-200 ${
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all duration-200 ${
               activeTab === 'graph'
                 ? 'bg-stone-800/90 text-white font-medium shadow-md border border-stone-700/80'
                 : 'text-stone-400 hover:text-stone-200 hover:bg-stone-900/60'
             }`}
           >
             <Layers className="w-3.5 h-3.5 text-rose-400" />
-            <span className="font-sans">Living Topology</span>
+            <span className="font-sans">Topology</span>
           </button>
           <button
             onClick={() => setActiveTab('upload')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all duration-200 ${
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all duration-200 ${
               activeTab === 'upload'
                 ? 'bg-stone-800/90 text-white font-medium shadow-md border border-stone-700/80'
                 : 'text-stone-400 hover:text-stone-200 hover:bg-stone-900/60'
             }`}
           >
             <UploadCloud className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-sans">Custom Diagram</span>
+            <span className="font-sans">Upload Diagram</span>
             {customImage && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>}
           </button>
         </div>
@@ -70,7 +70,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setShowSamMasks(!showSamMasks)}
-            className={`flex items-center space-x-1.5 text-xs px-3.5 py-1.5 rounded-xl border transition-all duration-200 ${
+            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all duration-200 ${
               showSamMasks
                 ? 'bg-rose-500/15 border-rose-500/40 text-rose-300 font-medium shadow-sm'
                 : 'bg-stone-900/70 border-stone-800 text-stone-400 hover:text-stone-200'
@@ -84,7 +84,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
 
       {/* Main Canvas Area (Framed Studio Viewport) */}
       {activeTab === 'graph' ? (
-        <div className="relative flex-1 glass-inner rounded-2xl m-3.5 flex items-center justify-center min-h-[420px] p-6 select-none overflow-hidden animate-fade-in shadow-inner">
+        <div className="relative flex-1 glass-inner rounded-2xl m-3 flex items-center justify-center min-h-[420px] p-6 select-none overflow-hidden animate-fade-in shadow-inner">
           {/* Subtle warm amber/coral grid pattern */}
           <div
             className="absolute inset-0 opacity-20 pointer-events-none"
@@ -240,12 +240,6 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
               );
             })}
           </svg>
-
-          {/* Minimalist Bottom Badge */}
-          <div className="absolute bottom-3.5 left-4 flex items-center space-x-2 text-[11px] text-stone-300 font-mono bg-stone-900/80 px-3 py-1.5 rounded-xl border border-stone-800/80 backdrop-blur-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-            <span>Meta SAM 3.1 zero-shot perception active</span>
-          </div>
         </div>
       ) : (
         /* Upload Mode */
@@ -253,7 +247,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
-          className="relative flex-1 glass-inner rounded-2xl m-3.5 p-6 flex flex-col items-center justify-center min-h-[420px] animate-fade-in shadow-inner"
+          className="relative flex-1 glass-inner rounded-2xl m-3 p-6 flex flex-col items-center justify-center min-h-[420px] animate-fade-in shadow-inner"
         >
           {customImage ? (
             <div className="relative w-full h-full flex flex-col items-center justify-center animate-fade-in">
@@ -284,21 +278,21 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
               <div className="mt-4 flex items-center space-x-3">
                 <div className="flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-emerald-950/60 border border-emerald-700/60 text-xs text-emerald-300">
                   <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Meta SAM 3.1: 2 Clusters, 5 Ingress Nodes Segmented</span>
+                  <span>Meta SAM 3.1: Segmented</span>
                 </div>
                 <button
                   onClick={() => setCustomImage(null)}
-                  className="flex items-center space-x-1 px-3.5 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-xs text-stone-200 transition-colors duration-200 border border-stone-700"
+                  className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-xs text-stone-200 transition-colors duration-200 border border-stone-700"
                 >
                   <X className="w-3.5 h-3.5 text-stone-400" />
-                  <span>Remove Image</span>
+                  <span>Remove</span>
                 </button>
               </div>
             </div>
           ) : (
             <div
               onClick={() => fileInputRef.current?.click()}
-              className={`w-full max-w-md p-10 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
+              className={`w-full max-w-md p-8 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
                 isDragging
                   ? 'border-rose-500 bg-rose-950/20 shadow-2xl'
                   : 'border-stone-700/80 hover:border-stone-500 bg-stone-900/40'
@@ -315,18 +309,15 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                   }
                 }}
               />
-              <div className="w-12 h-12 rounded-2xl bg-stone-800/80 border border-stone-700 flex items-center justify-center text-rose-400 mb-3 shadow-inner">
-                <UploadCloud className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-xl bg-stone-800/80 border border-stone-700 flex items-center justify-center text-rose-400 mb-2 shadow-inner">
+                <UploadCloud className="w-5 h-5" />
               </div>
-              <h4 className="text-sm font-semibold text-stone-100 font-sans">
-                Upload Architecture Diagram
+              <h4 className="text-xs font-semibold text-stone-100 font-sans">
+                Drop System Diagram
               </h4>
-              <p className="text-xs text-stone-400 mt-1 max-w-xs leading-relaxed font-sans">
-                Drop your system diagram (PNG, JPEG, SVG) to extract component topology with Meta SAM 3.1
+              <p className="text-[11px] text-stone-400 mt-1 max-w-xs leading-relaxed font-sans">
+                PNG, JPEG, or SVG architecture diagram to parse with Meta SAM 3.1
               </p>
-              <div className="mt-4 text-[10px] font-mono px-3 py-1 rounded-xl bg-stone-800 text-stone-300 border border-stone-700">
-                PNG · JPEG · Excalidraw · Draw.io
-              </div>
             </div>
           )}
         </div>
@@ -334,15 +325,15 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
 
       {/* Selected Node Drawer */}
       {selectedNode && activeTab === 'graph' && (
-        <div className="px-5 py-3 border-t border-stone-800/80 bg-stone-950/80 backdrop-blur-xl flex items-center justify-between text-xs animate-fade-in transition-all duration-200">
+        <div className="px-5 py-2.5 border-t border-stone-800/80 bg-stone-950/80 backdrop-blur-xl flex items-center justify-between text-xs animate-fade-in transition-all duration-200">
           <div className="flex items-center space-x-2.5">
-            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: selectedNode.color }}></span>
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: selectedNode.color }}></span>
             <span className="font-semibold text-stone-100">{selectedNode.label}</span>
-            <span className="text-stone-400 font-mono text-[11px]">({selectedNode.type})</span>
+            <span className="text-stone-400 font-mono text-[10px]">({selectedNode.type})</span>
           </div>
           <div className="flex items-center space-x-3 text-stone-300 text-xs">
             <span>Allowed Egress:</span>
-            <span className="px-2.5 py-1 rounded-md bg-stone-800 border border-stone-700 text-stone-200 font-mono text-[11px]">
+            <span className="px-2 py-0.5 rounded-md bg-stone-800 border border-stone-700 text-stone-200 font-mono text-[11px]">
               {selectedNode.allowedEgress.length > 0 ? selectedNode.allowedEgress.join(', ') : 'None (Terminal)'}
             </span>
             <button

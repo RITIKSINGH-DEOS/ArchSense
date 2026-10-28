@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { GitPullRequest, GitBranch, User, Sparkles, RefreshCw, Edit3, Eye, FileDiff } from 'lucide-react';
+import { GitBranch, User, Sparkles, RefreshCw, Edit3, Eye, FileDiff } from 'lucide-react';
 
 interface Props {
   prTitle: string;
@@ -31,41 +31,40 @@ export const DiffInspector: React.FC<Props> = ({
   return (
     <div className="glass-panel rounded-3xl overflow-hidden flex flex-col w-full shadow-2xl transition-all duration-300">
       {/* Header Toolbar */}
-      <div className="px-5 py-3.5 border-b border-stone-800/80 bg-stone-950/60 backdrop-blur-xl flex items-center justify-between">
+      <div className="px-5 py-3 border-b border-stone-800/80 bg-stone-950/60 backdrop-blur-xl flex items-center justify-between">
         <div className="flex items-center space-x-2.5">
           <FileDiff className="w-4 h-4 text-rose-400" />
-          <div>
-            <h3 className="text-sm font-semibold text-stone-100 tracking-tight font-sans">Pull Request Diff Inspector</h3>
-            <p className="text-[11px] text-stone-400 hidden sm:block font-sans">Unified Code Delta Analysis</p>
-          </div>
+          <h3 className="text-xs font-semibold text-stone-100 tracking-tight font-sans">
+            Pull Request Diff
+          </h3>
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsEditMode(!isEditMode)}
-            className={`flex items-center space-x-1.5 text-xs px-3.5 py-1.5 rounded-xl border transition-all duration-200 ${
+            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all duration-200 ${
               isEditMode
                 ? 'bg-amber-500/15 border-amber-500/50 text-amber-300 font-semibold shadow-sm'
-                : 'bg-stone-900/70 border-stone-800 text-stone-300 hover:text-white hover:bg-stone-800'
+                : 'glass-pill text-stone-300 hover:text-white'
             }`}
           >
             {isEditMode ? (
               <>
                 <Eye className="w-3.5 h-3.5" />
-                <span className="font-sans">View Diff</span>
+                <span className="font-sans">View</span>
               </>
             ) : (
               <>
                 <Edit3 className="w-3.5 h-3.5 text-amber-400" />
-                <span className="font-sans">Edit Diff</span>
+                <span className="font-sans">Edit</span>
               </>
             )}
           </button>
 
           <button
             onClick={onReset}
-            className="p-2 rounded-xl bg-stone-900/70 hover:bg-stone-800 text-stone-300 hover:text-white transition-colors duration-200 border border-stone-800"
-            title="Reset to scenario default"
+            className="p-1.5 rounded-xl glass-pill text-stone-400 hover:text-white transition-colors duration-200"
+            title="Reset Diff"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
@@ -73,38 +72,38 @@ export const DiffInspector: React.FC<Props> = ({
       </div>
 
       {/* PR Metadata bar */}
-      <div className="px-5 py-3 bg-stone-900/30 border-b border-stone-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+      <div className="px-5 py-2.5 bg-stone-900/30 border-b border-stone-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
         <div className="font-semibold text-stone-100 flex items-center gap-2 truncate">
           <span className="text-rose-400 font-mono text-xs font-bold">#142</span>
           <span className="truncate text-xs text-stone-200">{prTitle}</span>
         </div>
-        <div className="flex items-center space-x-4 text-stone-400 text-xs font-mono">
-          <span className="flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5 text-stone-500" />
-            <span className="text-stone-300">{prAuthor}</span>
-          </span>
-          <span className="text-stone-600">•</span>
+        <div className="flex items-center space-x-3 text-stone-400 text-xs font-mono">
           <span className="flex items-center gap-1.5 text-stone-300">
-            <GitBranch className="w-3.5 h-3.5 text-stone-500" />
+            <User className="w-3 h-3 text-stone-500" />
+            <span>{prAuthor}</span>
+          </span>
+          <span className="text-stone-700">•</span>
+          <span className="flex items-center gap-1.5 text-stone-300">
+            <GitBranch className="w-3 h-3 text-stone-500" />
             <span className="text-rose-300 font-medium">{prBranch}</span>
           </span>
           {isEditMode && (
-            <span className="text-amber-400 text-[11px] font-semibold animate-pulse">
+            <span className="text-amber-400 text-[10px] font-semibold animate-pulse">
               ● Edit Mode
             </span>
           )}
         </div>
       </div>
 
-      {/* Diff Content Area (Framed translucent code viewport) */}
-      <div className="glass-inner rounded-2xl m-3.5 font-mono text-xs overflow-y-auto h-[340px] shadow-inner">
+      {/* Diff Content Area */}
+      <div className="glass-inner rounded-2xl m-3 font-mono text-xs overflow-y-auto h-[320px] shadow-inner">
         {isEditMode ? (
           <div className="p-4 h-full animate-fade-in">
             <textarea
               value={diffCode}
               onChange={(e) => onDiffChange(e.target.value)}
               placeholder="Paste any unified Git diff here..."
-              className="w-full h-full p-4 bg-stone-900/60 text-stone-100 font-mono text-xs rounded-xl border border-stone-700/80 focus:outline-none focus:border-rose-500 leading-relaxed resize-none transition-all duration-200"
+              className="w-full h-full p-3 bg-stone-900/60 text-stone-100 font-mono text-xs rounded-xl border border-stone-700/80 focus:outline-none focus:border-rose-500 leading-relaxed resize-none transition-all duration-200"
             />
           </div>
         ) : (
@@ -130,11 +129,11 @@ export const DiffInspector: React.FC<Props> = ({
       </div>
 
       {/* Audit Action CTA Button */}
-      <div className="p-4 border-t border-stone-800/80 bg-stone-950/60 backdrop-blur-xl">
+      <div className="p-3.5 border-t border-stone-800/80 bg-stone-950/60 backdrop-blur-xl">
         <button
           onClick={onAudit}
           disabled={isAuditing}
-          className={`w-full py-3.5 px-5 rounded-2xl font-semibold text-xs sm:text-sm flex items-center justify-center space-x-2.5 transition-all duration-200 shadow-xl ring-1 ring-white/10 ${
+          className={`w-full py-3 px-5 rounded-2xl font-semibold text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all duration-200 shadow-xl ring-1 ring-white/10 ${
             isAuditing
               ? 'bg-rose-900/70 text-white opacity-80 cursor-wait'
               : 'bg-gradient-to-r from-rose-600 via-rose-500 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white shadow-rose-950/50 active:scale-[0.99]'
@@ -143,12 +142,12 @@ export const DiffInspector: React.FC<Props> = ({
           {isAuditing ? (
             <>
               <RefreshCw className="w-4 h-4 animate-spin text-white" />
-              <span>Auditing Microservice Boundaries with Meta SAM 3.1 & Muse Spark...</span>
+              <span>Auditing service boundaries with Meta AI...</span>
             </>
           ) : (
             <>
               <Sparkles className="w-4 h-4 text-rose-200" />
-              <span className="font-sans">Run ArchSense Boundary Audit</span>
+              <span className="font-sans">Run Boundary Audit</span>
             </>
           )}
         </button>

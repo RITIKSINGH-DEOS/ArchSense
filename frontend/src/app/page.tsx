@@ -9,7 +9,7 @@ import { DiffInspector } from '../components/DiffInspector';
 import { AuditStation } from '../components/AuditStation';
 import { ExportModal } from '../components/ExportModal';
 import { SCENARIOS, AuditScenario, Violation, ArchitectureEdge } from '../data/mockScenarios';
-import { Sparkles, Layers, GitPullRequest, ShieldCheck, Plus } from 'lucide-react';
+import { Sparkles, Layers, GitPullRequest, ShieldCheck } from 'lucide-react';
 
 export default function Home() {
   const [currentScenario, setCurrentScenario] = useState<AuditScenario>(SCENARIOS.scenarioA);
@@ -105,82 +105,63 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#090807] text-[#f5f5f4] flex flex-col font-sans selection:bg-rose-500 selection:text-white antialiased relative overflow-x-hidden">
-      {/* ============================================================== */}
-      {/* 1. VISIBLE GEOMETRIC GRID & ATMOSPHERIC GLOWS (Glassmorphism Underlay) */}
-      {/* ============================================================== */}
+      {/* 1. Subtle Dot Matrix & Ambient Glows */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Crisp Geometric Dot Matrix Pattern (Refracts through frosted glass) */}
         <div
-          className="absolute inset-0 opacity-[0.14]"
+          className="absolute inset-0 opacity-[0.12]"
           style={{
             backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.4) 1.2px, transparent 1.2px)',
             backgroundSize: '28px 28px',
           }}
         />
-
-        {/* Ambient Atmospheric Orbs */}
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-tr from-rose-600/35 via-rose-500/25 to-amber-500/20 blur-[130px] rounded-full" />
-        <div className="absolute top-[35%] -right-40 w-[650px] h-[550px] bg-gradient-to-bl from-rose-600/25 to-amber-600/20 blur-[150px] rounded-full" />
-        <div className="absolute top-[65%] -left-40 w-[650px] h-[550px] bg-gradient-to-tr from-violet-600/20 via-rose-600/15 to-transparent blur-[160px] rounded-full" />
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-tr from-rose-600/30 via-rose-500/20 to-amber-500/15 blur-[140px] rounded-full" />
+        <div className="absolute top-[35%] -right-40 w-[650px] h-[550px] bg-gradient-to-bl from-rose-600/20 to-amber-600/15 blur-[160px] rounded-full" />
       </div>
 
-      {/* 2. Glassmorphic Navigation Header */}
+      {/* 2. Clean Header */}
       <Header onOpenExport={() => setIsExportOpen(true)} />
 
-      {/* 3. Executive Metrics Ribbon */}
+      {/* 3. Sleek Metrics Ribbon */}
       <MetricsBar />
 
       {/* Main Studio Area */}
-      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8">
-        {/* Editorial Impact Headline Hero (Directly Inspired by Reference Screenshot) */}
-        <div className="flex flex-col gap-3.5 pt-2 pb-1">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full glass-pill text-rose-300 text-xs font-mono w-fit">
+      <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+        {/* Punchy Centered Hero (3-second clarity for judges) */}
+        <div className="flex flex-col items-center text-center gap-3 pt-4 pb-2 max-w-2xl mx-auto">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full glass-pill text-rose-300 text-xs font-mono">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-            <span>Autonomous Architecture Governance Engine</span>
+            <span>Visual Architecture Governance for Pull Requests</span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-[54px] tracking-tight text-stone-100 font-normal leading-[1.12]">
-            <span className="text-[#ff5252] font-serif">Architecture drift</span> puts your system and production at{' '}
+          <h1 className="font-serif text-3xl sm:text-5xl tracking-tight text-stone-100 font-normal leading-[1.15]">
+            <span className="text-[#ff5252] font-serif">Architecture drift</span> puts your production at{' '}
             <span className="text-[#ff5252] font-serif">risk.</span>
           </h1>
-          <p className="text-sm sm:text-base text-stone-400 max-w-3xl leading-relaxed font-sans">
-            Invisible PR changes bypass API gateways, leak internal databases, and introduce circular deadlocks.
-            ArchSense marries Meta SAM 3.1 visual perception with semantic code reasoning to enforce zero-trust boundaries before deploy.
+          <p className="text-xs sm:text-sm text-stone-400 font-sans leading-relaxed max-w-lg">
+            Audit PR code changes against your system architecture diagram in real time with Meta AI before merge.
           </p>
         </div>
 
-        {/* Evaluator Scenario Selector (Full Width Glassmorphic Pill Suite) */}
+        {/* Evaluator Scenario Selector */}
         <ScenarioPicker
           currentScenarioId={currentScenario.id}
           onSelect={handleScenarioChange}
         />
 
         {/* ============================================================== */}
-        {/* STEP 01: Living Architecture Topology (Full Width Glass Panel) */}
+        {/* STEP 01: System Diagram (Topology) */}
         {/* ============================================================== */}
-        <section className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center space-x-2.5">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">
-                STEP 01
-              </span>
-              <div className="flex items-center space-x-2">
-                <Layers className="w-4 h-4 text-rose-400" />
-                <h2 className="text-sm font-semibold text-stone-100 tracking-tight font-sans">
-                  Living Architecture Topology & Component Boundaries
-                </h2>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="text-xs text-stone-400 font-mono hidden sm:inline">
-                Meta SAM 3.1 Zero-Shot Segmentation Engine
-              </span>
-              <div className="w-7 h-7 rounded-full glass-pill flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer">
-                <Plus className="w-3.5 h-3.5" />
-              </div>
-            </div>
+        <section className="flex flex-col gap-2">
+          <div className="flex items-center space-x-2 px-1">
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">
+              STEP 01
+            </span>
+            <Layers className="w-4 h-4 text-rose-400" />
+            <h2 className="text-xs font-semibold text-stone-200 tracking-tight font-sans">
+              System Architecture Topology
+            </h2>
           </div>
 
-          <div className="w-full h-[480px]">
+          <div className="w-full h-[460px]">
             <ArchitectureCanvas
               nodes={currentScenario.nodes}
               edges={edges}
@@ -190,29 +171,17 @@ export default function Home() {
         </section>
 
         {/* ============================================================== */}
-        {/* STEP 02: Pull Request Code Diff Inspector (Full Width Glass Panel) */}
+        {/* STEP 02: Pull Request Code Diff */}
         {/* ============================================================== */}
-        <section className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center space-x-2.5">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                STEP 02
-              </span>
-              <div className="flex items-center space-x-2">
-                <GitPullRequest className="w-4 h-4 text-amber-400" />
-                <h2 className="text-sm font-semibold text-stone-100 tracking-tight font-sans">
-                  Git Pull Request Code Diff & Boundary Audit Trigger
-                </h2>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="text-xs text-stone-400 font-mono hidden sm:inline">
-                Live Unified Diff Editor · Semantic Code Reasoning
-              </span>
-              <div className="w-7 h-7 rounded-full glass-pill flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer">
-                <Plus className="w-3.5 h-3.5" />
-              </div>
-            </div>
+        <section className="flex flex-col gap-2">
+          <div className="flex items-center space-x-2 px-1">
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+              STEP 02
+            </span>
+            <GitPullRequest className="w-4 h-4 text-amber-400" />
+            <h2 className="text-xs font-semibold text-stone-200 tracking-tight font-sans">
+              Pull Request Code Diff
+            </h2>
           </div>
 
           <div className="w-full">
@@ -231,29 +200,17 @@ export default function Home() {
         </section>
 
         {/* ============================================================== */}
-        {/* STEP 03: Architectural Governance & Audit Station (Full Width Glass Panel) */}
+        {/* STEP 03: Governance Decision */}
         {/* ============================================================== */}
-        <section className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center space-x-2.5">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">
-                STEP 03
-              </span>
-              <div className="flex items-center space-x-2">
-                <ShieldCheck className="w-4 h-4 text-rose-400" />
-                <h2 className="text-sm font-semibold text-stone-100 tracking-tight font-sans">
-                  Real-Time Architectural Governance Decision & Policy Gate
-                </h2>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="text-xs text-stone-400 font-mono hidden sm:inline">
-                Deterministic Pydantic Air-Gapped Verification
-              </span>
-              <div className="w-7 h-7 rounded-full glass-pill flex items-center justify-center text-stone-300 hover:text-white transition-all cursor-pointer">
-                <Plus className="w-3.5 h-3.5" />
-              </div>
-            </div>
+        <section className="flex flex-col gap-2">
+          <div className="flex items-center space-x-2 px-1">
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">
+              STEP 03
+            </span>
+            <ShieldCheck className="w-4 h-4 text-rose-400" />
+            <h2 className="text-xs font-semibold text-stone-200 tracking-tight font-sans">
+              Governance Decision
+            </h2>
           </div>
 
           <div className="w-full">
@@ -268,21 +225,15 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Evaluator Context Banner (Frosted Glass Panel) */}
-        <div className="glass-panel p-4 sm:p-5 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-stone-300 gap-3">
-          <div className="flex items-center space-x-2.5">
-            <Sparkles className="w-4 h-4 text-rose-400 flex-shrink-0" />
-            <span className="font-sans">
-              <strong className="text-stone-100">Evaluator Note:</strong> Built for zero-hardware evaluation at the Meta Global AI Developer Hackathon.
-              Combines Meta SAM 3.1 visual segmentation with Meta Model API (Muse Spark) semantic code reasoning.
-            </span>
+        {/* Clean Minimal Footer */}
+        <footer className="mt-4 pb-8 flex items-center justify-center text-center">
+          <div className="glass-pill px-4 py-2 rounded-full flex items-center space-x-2.5 text-[11px] font-mono text-stone-400">
+            <Sparkles className="w-3.5 h-3.5 text-rose-400" />
+            <span>Built with Meta SAM 3.1 & Muse Spark · Meta Global AI Hackathon</span>
+            <span className="text-stone-700">•</span>
+            <span className="text-emerald-400">Deterministic Engine Active</span>
           </div>
-          <div className="flex items-center space-x-2 text-[11px] text-stone-400 font-mono flex-shrink-0">
-            <span className="text-emerald-400 font-semibold">● Engine Active</span>
-            <span>·</span>
-            <span>Living Sync: Mermaid / JSON / PR Markdown</span>
-          </div>
-        </div>
+        </footer>
       </main>
 
       {/* Living Topology & PR Export Modal */}
