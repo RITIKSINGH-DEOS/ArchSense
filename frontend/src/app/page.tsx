@@ -36,7 +36,8 @@ export default function Home() {
     setIsAuditing(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/audit', {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://archsense.onrender.com';
+      const response = await fetch(`${apiBaseUrl}/api/audit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
