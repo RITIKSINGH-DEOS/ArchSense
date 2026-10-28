@@ -38,31 +38,31 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
   };
 
   return (
-    <div className="bg-zinc-900/90 border border-zinc-700/70 rounded-2xl overflow-hidden flex flex-col h-full shadow-2xl shadow-black/70 backdrop-blur-xl transition-all duration-300">
+    <div className="glass-panel rounded-3xl overflow-hidden flex flex-col h-full shadow-2xl transition-all duration-300">
       {/* Sleek Toolbar */}
-      <div className="px-5 py-3.5 border-b border-zinc-700/60 flex items-center justify-between bg-zinc-900/95">
-        <div className="flex items-center space-x-1.5 bg-zinc-950/80 p-1 rounded-xl border border-zinc-800 text-xs">
+      <div className="px-5 py-3.5 border-b border-stone-800/80 flex items-center justify-between bg-stone-950/60 backdrop-blur-xl">
+        <div className="flex items-center space-x-1.5 bg-stone-950/90 p-1 rounded-2xl border border-stone-800/80 text-xs">
           <button
             onClick={() => setActiveTab('graph')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg transition-all duration-200 ${
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all duration-200 ${
               activeTab === 'graph'
-                ? 'bg-zinc-800 text-white font-medium shadow-md border border-zinc-700'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+                ? 'bg-stone-800/90 text-white font-medium shadow-md border border-stone-700/80'
+                : 'text-stone-400 hover:text-stone-200 hover:bg-stone-900/60'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Living Topology</span>
+            <Layers className="w-3.5 h-3.5 text-rose-400" />
+            <span className="font-sans">Living Topology</span>
           </button>
           <button
             onClick={() => setActiveTab('upload')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg transition-all duration-200 ${
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl transition-all duration-200 ${
               activeTab === 'upload'
-                ? 'bg-zinc-800 text-white font-medium shadow-md border border-zinc-700'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+                ? 'bg-stone-800/90 text-white font-medium shadow-md border border-stone-700/80'
+                : 'text-stone-400 hover:text-stone-200 hover:bg-stone-900/60'
             }`}
           >
             <UploadCloud className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Custom Diagram</span>
+            <span className="font-sans">Custom Diagram</span>
             {customImage && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>}
           </button>
         </div>
@@ -72,24 +72,24 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
             onClick={() => setShowSamMasks(!showSamMasks)}
             className={`flex items-center space-x-1.5 text-xs px-3.5 py-1.5 rounded-xl border transition-all duration-200 ${
               showSamMasks
-                ? 'bg-indigo-600/20 border-indigo-500/50 text-indigo-300 font-medium shadow-sm'
-                : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:text-zinc-200'
+                ? 'bg-rose-500/15 border-rose-500/40 text-rose-300 font-medium shadow-sm'
+                : 'bg-stone-900/70 border-stone-800 text-stone-400 hover:text-stone-200'
             }`}
           >
             <Scan className="w-3.5 h-3.5" />
-            <span>SAM 3.1 Masks: {showSamMasks ? 'ON' : 'OFF'}</span>
+            <span className="font-sans">SAM 3.1 Masks: {showSamMasks ? 'ON' : 'OFF'}</span>
           </button>
         </div>
       </div>
 
       {/* Main Canvas Area (Framed Studio Viewport) */}
       {activeTab === 'graph' ? (
-        <div className="relative flex-1 bg-[#0a0b10] border border-zinc-800/80 rounded-xl m-3 flex items-center justify-center min-h-[420px] p-6 select-none overflow-hidden animate-fade-in shadow-inner">
-          {/* Subtle grid pattern */}
+        <div className="relative flex-1 bg-[#0c0a09] border border-stone-800/70 rounded-2xl m-3.5 flex items-center justify-center min-h-[420px] p-6 select-none overflow-hidden animate-fade-in shadow-inner">
+          {/* Subtle warm amber/coral grid pattern */}
           <div
-            className="absolute inset-0 opacity-15 pointer-events-none"
+            className="absolute inset-0 opacity-20 pointer-events-none"
             style={{
-              backgroundImage: 'radial-gradient(#6366f1 1.2px, transparent 1.2px)',
+              backgroundImage: 'radial-gradient(rgba(244, 63, 94, 0.4) 1px, transparent 1px)',
               backgroundSize: '24px 24px',
             }}
           />
@@ -97,7 +97,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           <svg viewBox="0 0 820 340" className="w-full h-full max-w-full drop-shadow-2xl">
             <defs>
               <marker id="arrow-rest" viewBox="0 0 10 10" refX="28" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#6366F1" />
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e" />
               </marker>
               <marker id="arrow-grpc" viewBox="0 0 10 10" refX="28" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#10B981" />
@@ -117,7 +117,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
               if (!src || !tgt) return null;
 
               const isViolated = isAudited && edge.isViolated;
-              const strokeColor = isViolated ? '#EF4444' : '#6366F1';
+              const strokeColor = isViolated ? '#EF4444' : '#71717a';
               const markerId = isViolated
                 ? 'url(#arrow-violation)'
                 : edge.protocol === 'gRPC'
@@ -146,7 +146,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                     strokeWidth={isViolated ? 3.2 : 2}
                     strokeDasharray={isViolated ? '6 4' : 'none'}
                     markerEnd={markerId}
-                    opacity={isViolated ? 1 : 0.8}
+                    opacity={isViolated ? 1 : 0.85}
                     className={isViolated ? 'animate-pulse' : 'transition-opacity duration-200 group-hover:opacity-100'}
                   />
                   <rect
@@ -155,8 +155,8 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                     width="56"
                     height="18"
                     rx="6"
-                    fill={isViolated ? '#450a0a' : '#18181b'}
-                    stroke={isViolated ? '#dc2626' : '#3f3f46'}
+                    fill={isViolated ? '#450a0a' : '#1c1917'}
+                    stroke={isViolated ? '#dc2626' : '#44403c'}
                     strokeWidth="1"
                     className="transition-colors duration-200"
                   />
@@ -164,7 +164,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                     x={midX}
                     y={midY + 3.5}
                     textAnchor="middle"
-                    fill={isViolated ? '#fca5a5' : '#e4e4e7'}
+                    fill={isViolated ? '#fca5a5' : '#e7e5e4'}
                     fontSize="8.5"
                     fontFamily="monospace"
                     fontWeight="bold"
@@ -192,10 +192,10 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                       height={node.height + 8}
                       rx="14"
                       fill="none"
-                      stroke="#818CF8"
+                      stroke="#f43f5e"
                       strokeWidth="1.5"
                       strokeDasharray="4 3"
-                      opacity="0.7"
+                      opacity="0.65"
                     />
                   )}
                   <rect
@@ -204,8 +204,8 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                     width={node.width}
                     height={node.height}
                     rx="12"
-                    fill="#18181b"
-                    stroke={isSelected ? '#818CF8' : '#3f3f46'}
+                    fill="#181513"
+                    stroke={isSelected ? '#f43f5e' : '#3f3a36'}
                     strokeWidth={isSelected ? 2 : 1.2}
                     className="filter drop-shadow-2xl transition-colors duration-200"
                   />
@@ -220,7 +220,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                   <text
                     x={node.x + 14}
                     y={node.y + 25}
-                    fill="#FFFFFF"
+                    fill="#F5F5F4"
                     fontSize="11.5"
                     fontWeight="600"
                     fontFamily="sans-serif"
@@ -230,7 +230,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                   <text
                     x={node.x + 14}
                     y={node.y + 43}
-                    fill="#A1A1AA"
+                    fill="#A8A29E"
                     fontSize="9"
                     fontFamily="monospace"
                   >
@@ -242,8 +242,8 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           </svg>
 
           {/* Minimalist Bottom Badge */}
-          <div className="absolute bottom-3 left-4 flex items-center space-x-2 text-[11px] text-zinc-400 font-mono bg-zinc-900/80 px-2.5 py-1 rounded-lg border border-zinc-800">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+          <div className="absolute bottom-3.5 left-4 flex items-center space-x-2 text-[11px] text-stone-300 font-mono bg-stone-900/80 px-3 py-1.5 rounded-xl border border-stone-800/80 backdrop-blur-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
             <span>Meta SAM 3.1 zero-shot perception active</span>
           </div>
         </div>
@@ -253,27 +253,27 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
-          className="relative flex-1 bg-[#0a0b10] border border-zinc-800/80 rounded-xl m-3 p-6 flex flex-col items-center justify-center min-h-[420px] animate-fade-in shadow-inner"
+          className="relative flex-1 bg-[#0c0a09] border border-stone-800/70 rounded-2xl m-3.5 p-6 flex flex-col items-center justify-center min-h-[420px] animate-fade-in shadow-inner"
         >
           {customImage ? (
             <div className="relative w-full h-full flex flex-col items-center justify-center animate-fade-in">
-              <div className="relative max-w-full max-h-[300px] rounded-xl overflow-hidden border border-zinc-700 shadow-2xl">
+              <div className="relative max-w-full max-h-[300px] rounded-2xl overflow-hidden border border-stone-700 shadow-2xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={customImage}
                   alt="Custom Architecture Diagram"
-                  className="max-h-[300px] object-contain rounded-xl"
+                  className="max-h-[300px] object-contain rounded-2xl"
                 />
 
                 {showSamMasks && (
                   <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-[20%] left-[10%] w-[35%] h-[40%] border-2 border-dashed border-indigo-400 bg-indigo-500/10 rounded-lg">
-                      <span className="text-[9.5px] font-mono bg-indigo-950/90 border border-indigo-500/40 px-1.5 py-0.5 rounded text-indigo-200 absolute -top-3.5 left-2">
+                    <div className="absolute top-[20%] left-[10%] w-[35%] h-[40%] border-2 border-dashed border-rose-400 bg-rose-500/10 rounded-lg">
+                      <span className="text-[9.5px] font-mono bg-rose-950/90 border border-rose-500/40 px-1.5 py-0.5 rounded text-rose-200 absolute -top-3.5 left-2">
                         SAM-3.1: ServiceCluster_A (98%)
                       </span>
                     </div>
-                    <div className="absolute top-[30%] right-[15%] w-[30%] h-[45%] border-2 border-dashed border-emerald-400 bg-emerald-500/10 rounded-lg">
-                      <span className="text-[9.5px] font-mono bg-emerald-950/90 border border-emerald-500/40 px-1.5 py-0.5 rounded text-emerald-200 absolute -top-3.5 left-2">
+                    <div className="absolute top-[30%] right-[15%] w-[30%] h-[45%] border-2 border-dashed border-amber-400 bg-amber-500/10 rounded-lg">
+                      <span className="text-[9.5px] font-mono bg-amber-950/90 border border-amber-500/40 px-1.5 py-0.5 rounded text-amber-200 absolute -top-3.5 left-2">
                         SAM-3.1: DataSink_B (96%)
                       </span>
                     </div>
@@ -288,9 +288,9 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                 </div>
                 <button
                   onClick={() => setCustomImage(null)}
-                  className="flex items-center space-x-1 px-3 py-1 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-200 transition-colors duration-200 border border-zinc-700"
+                  className="flex items-center space-x-1 px-3.5 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-xs text-stone-200 transition-colors duration-200 border border-stone-700"
                 >
-                  <X className="w-3.5 h-3.5 text-zinc-400" />
+                  <X className="w-3.5 h-3.5 text-stone-400" />
                   <span>Remove Image</span>
                 </button>
               </div>
@@ -298,10 +298,10 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           ) : (
             <div
               onClick={() => fileInputRef.current?.click()}
-              className={`w-full max-w-md p-10 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
+              className={`w-full max-w-md p-10 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
                 isDragging
-                  ? 'border-indigo-500 bg-indigo-950/30 shadow-2xl'
-                  : 'border-zinc-700 hover:border-zinc-500 bg-zinc-900/60'
+                  ? 'border-rose-500 bg-rose-950/20 shadow-2xl'
+                  : 'border-stone-700/80 hover:border-stone-500 bg-stone-900/40'
               }`}
             >
               <input
@@ -315,16 +315,16 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                   }
                 }}
               />
-              <div className="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-indigo-400 mb-3 shadow-inner">
+              <div className="w-12 h-12 rounded-2xl bg-stone-800/80 border border-stone-700 flex items-center justify-center text-rose-400 mb-3 shadow-inner">
                 <UploadCloud className="w-6 h-6" />
               </div>
-              <h4 className="text-sm font-semibold text-zinc-100">
+              <h4 className="text-sm font-semibold text-stone-100 font-sans">
                 Upload Architecture Diagram
               </h4>
-              <p className="text-xs text-zinc-400 mt-1 max-w-xs leading-relaxed">
+              <p className="text-xs text-stone-400 mt-1 max-w-xs leading-relaxed font-sans">
                 Drop your system diagram (PNG, JPEG, SVG) to extract component topology with Meta SAM 3.1
               </p>
-              <div className="mt-4 text-[10px] font-mono px-3 py-1 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700">
+              <div className="mt-4 text-[10px] font-mono px-3 py-1 rounded-xl bg-stone-800 text-stone-300 border border-stone-700">
                 PNG · JPEG · Excalidraw · Draw.io
               </div>
             </div>
@@ -334,20 +334,20 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
 
       {/* Selected Node Drawer */}
       {selectedNode && activeTab === 'graph' && (
-        <div className="px-5 py-3 border-t border-zinc-700/60 bg-zinc-900/95 flex items-center justify-between text-xs animate-fade-in transition-all duration-200">
+        <div className="px-5 py-3 border-t border-stone-800/80 bg-stone-950/80 backdrop-blur-xl flex items-center justify-between text-xs animate-fade-in transition-all duration-200">
           <div className="flex items-center space-x-2.5">
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: selectedNode.color }}></span>
-            <span className="font-semibold text-zinc-100">{selectedNode.label}</span>
-            <span className="text-zinc-400 font-mono text-[11px]">({selectedNode.type})</span>
+            <span className="font-semibold text-stone-100">{selectedNode.label}</span>
+            <span className="text-stone-400 font-mono text-[11px]">({selectedNode.type})</span>
           </div>
-          <div className="flex items-center space-x-3 text-zinc-300 text-xs">
+          <div className="flex items-center space-x-3 text-stone-300 text-xs">
             <span>Allowed Egress:</span>
-            <span className="px-2.5 py-1 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-200 font-mono text-[11px]">
+            <span className="px-2.5 py-1 rounded-md bg-stone-800 border border-stone-700 text-stone-200 font-mono text-[11px]">
               {selectedNode.allowedEgress.length > 0 ? selectedNode.allowedEgress.join(', ') : 'None (Terminal)'}
             </span>
             <button
               onClick={() => setSelectedNode(null)}
-              className="text-zinc-400 hover:text-zinc-200 ml-2"
+              className="text-stone-400 hover:text-stone-200 ml-2"
             >
               ✕
             </button>

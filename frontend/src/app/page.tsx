@@ -9,7 +9,7 @@ import { DiffInspector } from '../components/DiffInspector';
 import { AuditStation } from '../components/AuditStation';
 import { ExportModal } from '../components/ExportModal';
 import { SCENARIOS, AuditScenario, Violation, ArchitectureEdge } from '../data/mockScenarios';
-import { Sparkles, Layers, GitPullRequest, ShieldCheck } from 'lucide-react';
+import { Sparkles, Layers, GitPullRequest, ShieldCheck, AlertCircle } from 'lucide-react';
 
 export default function Home() {
   const [currentScenario, setCurrentScenario] = useState<AuditScenario>(SCENARIOS.scenarioA);
@@ -104,7 +104,14 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
+    <div className="min-h-screen bg-[#090807] text-[#f5f5f4] flex flex-col font-sans selection:bg-rose-500 selection:text-white antialiased relative">
+      {/* Ambient Warm Obsidian Glows (Glassmorphic Backdrop) */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[400px] bg-gradient-to-b from-rose-950/25 via-amber-950/15 to-transparent blur-[140px] rounded-full" />
+        <div className="absolute top-1/3 -right-32 w-[550px] h-[380px] bg-rose-950/15 blur-[160px] rounded-full" />
+        <div className="absolute bottom-1/4 -left-32 w-[550px] h-[380px] bg-amber-950/10 blur-[160px] rounded-full" />
+      </div>
+
       {/* 1. Header with Export Trigger */}
       <Header onOpenExport={() => setIsExportOpen(true)} />
 
@@ -112,7 +119,23 @@ export default function Home() {
       <MetricsBar />
 
       {/* Main Studio Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8">
+      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8">
+        {/* Editorial Headline Hero (Inspired by theme) */}
+        <div className="flex flex-col gap-3 pt-2 pb-1">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-mono w-fit">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            <span>Autonomous Architecture Governance Engine</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-5xl lg:text-[52px] tracking-tight text-stone-100 font-normal leading-[1.12]">
+            <span className="text-rose-500 font-serif">Architecture drift</span> puts your system and production at{' '}
+            <span className="text-rose-500 font-serif">risk.</span>
+          </h1>
+          <p className="text-sm sm:text-base text-stone-400 max-w-3xl leading-relaxed font-sans">
+            Invisible PR changes bypass API gateways, leak internal databases, and introduce circular deadlocks.
+            ArchSense marries Meta SAM 3.1 visual perception with semantic code reasoning to enforce zero-trust boundaries before code is merged.
+          </p>
+        </div>
+
         {/* Evaluator Scenario Selector (Full Width Top Control) */}
         <ScenarioPicker
           currentScenarioId={currentScenario.id}
@@ -125,17 +148,17 @@ export default function Home() {
         <section className="flex flex-col gap-2.5">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center space-x-2.5">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/40">
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">
                 STEP 01
               </span>
               <div className="flex items-center space-x-2">
-                <Layers className="w-4 h-4 text-indigo-400" />
-                <h2 className="text-sm font-semibold text-zinc-100 tracking-tight">
+                <Layers className="w-4 h-4 text-rose-400" />
+                <h2 className="text-sm font-semibold text-stone-100 tracking-tight font-sans">
                   Living Architecture Topology & Component Boundaries
                 </h2>
               </div>
             </div>
-            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+            <span className="text-xs text-stone-400 font-mono hidden sm:inline">
               Meta SAM 3.1 Zero-Shot Segmentation Engine
             </span>
           </div>
@@ -155,17 +178,17 @@ export default function Home() {
         <section className="flex flex-col gap-2.5">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center space-x-2.5">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/40">
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
                 STEP 02
               </span>
               <div className="flex items-center space-x-2">
-                <GitPullRequest className="w-4 h-4 text-emerald-400" />
-                <h2 className="text-sm font-semibold text-zinc-100 tracking-tight">
+                <GitPullRequest className="w-4 h-4 text-amber-400" />
+                <h2 className="text-sm font-semibold text-stone-100 tracking-tight font-sans">
                   Git Pull Request Code Diff & Boundary Audit Trigger
                 </h2>
               </div>
             </div>
-            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+            <span className="text-xs text-stone-400 font-mono hidden sm:inline">
               Live Unified Diff Editor · Semantic Code Reasoning
             </span>
           </div>
@@ -191,17 +214,17 @@ export default function Home() {
         <section className="flex flex-col gap-2.5">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center space-x-2.5">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/40">
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">
                 STEP 03
               </span>
               <div className="flex items-center space-x-2">
                 <ShieldCheck className="w-4 h-4 text-rose-400" />
-                <h2 className="text-sm font-semibold text-zinc-100 tracking-tight">
+                <h2 className="text-sm font-semibold text-stone-100 tracking-tight font-sans">
                   Real-Time Architectural Governance Decision & Policy Gate
                 </h2>
               </div>
             </div>
-            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+            <span className="text-xs text-stone-400 font-mono hidden sm:inline">
               Deterministic Pydantic Air-Gapped Verification
             </span>
           </div>
@@ -218,16 +241,16 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Evaluator Context Banner (Elevated Grayish Card) */}
-        <div className="p-4 rounded-2xl bg-zinc-900/90 border border-zinc-700/70 shadow-xl shadow-black/50 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-zinc-300 gap-3">
+        {/* Evaluator Context Banner (Glassmorphic Warm Card) */}
+        <div className="glass-panel p-4 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-stone-300 gap-3">
           <div className="flex items-center space-x-2.5">
-            <Sparkles className="w-4 h-4 text-indigo-400 flex-shrink-0" />
-            <span>
-              <strong className="text-white">Evaluator Note:</strong> Built for zero-hardware evaluation at the Meta Global AI Developer Hackathon.
+            <Sparkles className="w-4 h-4 text-rose-400 flex-shrink-0" />
+            <span className="font-sans">
+              <strong className="text-stone-100">Evaluator Note:</strong> Built for zero-hardware evaluation at the Meta Global AI Developer Hackathon.
               Combines Meta SAM 3.1 visual segmentation with Meta Model API (Muse Spark) semantic code reasoning.
             </span>
           </div>
-          <div className="flex items-center space-x-2 text-[11px] text-zinc-400 font-mono flex-shrink-0">
+          <div className="flex items-center space-x-2 text-[11px] text-stone-400 font-mono flex-shrink-0">
             <span className="text-emerald-400 font-semibold">● Engine Active</span>
             <span>·</span>
             <span>Living Sync: Mermaid / JSON / PR Markdown</span>
