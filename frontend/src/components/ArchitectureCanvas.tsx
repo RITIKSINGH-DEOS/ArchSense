@@ -84,12 +84,12 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
 
       {/* Main Canvas Area (Framed Studio Viewport) */}
       {activeTab === 'graph' ? (
-        <div className="relative flex-1 bg-[#0c0a09] border border-stone-800/70 rounded-2xl m-3.5 flex items-center justify-center min-h-[420px] p-6 select-none overflow-hidden animate-fade-in shadow-inner">
+        <div className="relative flex-1 glass-inner rounded-2xl m-3.5 flex items-center justify-center min-h-[420px] p-6 select-none overflow-hidden animate-fade-in shadow-inner">
           {/* Subtle warm amber/coral grid pattern */}
           <div
             className="absolute inset-0 opacity-20 pointer-events-none"
             style={{
-              backgroundImage: 'radial-gradient(rgba(244, 63, 94, 0.4) 1px, transparent 1px)',
+              backgroundImage: 'radial-gradient(rgba(244, 63, 94, 0.5) 1.2px, transparent 1.2px)',
               backgroundSize: '24px 24px',
             }}
           />
@@ -253,7 +253,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
-          className="relative flex-1 bg-[#0c0a09] border border-stone-800/70 rounded-2xl m-3.5 p-6 flex flex-col items-center justify-center min-h-[420px] animate-fade-in shadow-inner"
+          className="relative flex-1 glass-inner rounded-2xl m-3.5 p-6 flex flex-col items-center justify-center min-h-[420px] animate-fade-in shadow-inner"
         >
           {customImage ? (
             <div className="relative w-full h-full flex flex-col items-center justify-center animate-fade-in">

@@ -257,8 +257,8 @@ export const AuditStation: React.FC<Props> = ({
                         </p>
                       </div>
 
-                      {/* Remediation Box (High-Contrast Frame) */}
-                      <div className="p-3 rounded-xl bg-[#0c0a09] border border-stone-800/80 text-xs leading-relaxed">
+                      {/* Remediation Box (Frosted Glass Frame) */}
+                      <div className="p-3 rounded-xl glass-inner text-xs leading-relaxed">
                         <div className="flex items-center space-x-1.5 text-rose-400 font-semibold mb-1 text-[11px]">
                           <ArrowRight className="w-3.5 h-3.5" />
                           <span className="font-sans">Actionable Remediation</span>
@@ -295,7 +295,7 @@ export const AuditStation: React.FC<Props> = ({
                   : `Blocking Check Failed: ${violations.length} critical architectural boundary violation(s) detected.`}
               </p>
 
-              <div className="p-3.5 rounded-xl bg-[#0c0a09] font-mono text-xs text-stone-200 border border-stone-800 space-y-1.5">
+              <div className="p-3.5 rounded-xl glass-inner font-mono text-xs text-stone-200 space-y-1.5">
                 <div>Audit Score: <span className="font-bold text-white">{score}/100</span></div>
                 <div>Governance Decision: <span className={`font-bold ${isApproved ? 'text-emerald-400' : 'text-rose-400'}`}>{status}</span></div>
                 <div>Perception Engine: <span className="text-stone-300">Meta SAM 3.1 Mask Model + Muse Spark Semantic Reasoner</span></div>

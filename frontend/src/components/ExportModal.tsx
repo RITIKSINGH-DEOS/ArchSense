@@ -211,7 +211,7 @@ export const ExportModal: React.FC<Props> = ({
         <div className="flex-1 p-4 bg-stone-950/60 overflow-hidden flex flex-col min-h-0">
           <pre
             key={activeTab}
-            className="flex-1 p-4 rounded-2xl bg-[#0c0a09] border border-stone-800/80 overflow-y-auto font-mono text-xs text-stone-300 leading-relaxed whitespace-pre-wrap animate-fade-in shadow-inner"
+            className="flex-1 p-4 rounded-2xl glass-inner overflow-y-auto font-mono text-xs text-stone-300 leading-relaxed whitespace-pre-wrap animate-fade-in shadow-inner"
           >
             {getActiveContent()}
           </pre>

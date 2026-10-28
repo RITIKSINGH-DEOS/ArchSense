@@ -43,8 +43,8 @@ export const ScenarioPicker: React.FC<Props> = ({ currentScenarioId, onSelect })
               onClick={() => onSelect(scenario)}
               className={`flex items-center justify-between sm:justify-start space-x-2.5 px-4 py-2.5 rounded-2xl text-xs font-medium transition-all duration-200 ease-out ${
                 isActive
-                  ? 'bg-stone-800/90 text-white shadow-xl shadow-black/80 border border-stone-600/80 ring-1 ring-rose-500/40'
-                  : 'bg-stone-900/40 text-stone-300 hover:text-white hover:bg-stone-800/60 border border-stone-800/80 hover:border-stone-700/80'
+                  ? 'bg-rose-950/40 text-white shadow-xl shadow-rose-950/40 border border-rose-500/50 ring-1 ring-rose-500/50 backdrop-blur-md'
+                  : 'glass-pill text-stone-300 hover:text-white hover:bg-white/[0.08]'
               }`}
             >
               <span

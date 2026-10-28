@@ -96,8 +96,8 @@ export const DiffInspector: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Diff Content Area (Framed dark code viewport) */}
-      <div className="bg-[#0c0a09] border border-stone-800/70 rounded-2xl m-3.5 font-mono text-xs overflow-y-auto h-[340px] shadow-inner">
+      {/* Diff Content Area (Framed translucent code viewport) */}
+      <div className="glass-inner rounded-2xl m-3.5 font-mono text-xs overflow-y-auto h-[340px] shadow-inner">
         {isEditMode ? (
           <div className="p-4 h-full animate-fade-in">
             <textarea
