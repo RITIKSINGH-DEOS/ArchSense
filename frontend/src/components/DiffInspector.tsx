@@ -197,10 +197,10 @@ jobs:
           <div className="flex items-center space-x-1 bg-stone-950/80 p-1 rounded-xl border border-stone-800 text-xs">
             <button
               onClick={() => setActiveSource('preset')}
-              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 ${
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 border ${
                 activeSource === 'preset'
-                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm'
-                  : 'text-stone-400 hover:text-stone-200'
+                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 shadow-sm'
+                  : 'border-transparent text-stone-400 hover:text-stone-200 hover:bg-white/[0.04]'
               }`}
             >
               <Sparkles className="w-3 h-3 text-rose-400" />
@@ -209,10 +209,10 @@ jobs:
 
             <button
               onClick={() => setActiveSource('github')}
-              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 ${
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 border ${
                 activeSource === 'github'
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
-                  : 'text-stone-400 hover:text-stone-200'
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm'
+                  : 'border-transparent text-stone-400 hover:text-stone-200 hover:bg-white/[0.04]'
               }`}
             >
               <GitPullRequest className="w-3 h-3 text-amber-400" />
@@ -255,9 +255,14 @@ jobs:
         </div>
       </div>
 
-      {/* 2. Live GitHub PR Fetching Drawer (Only shown when Live GitHub PR mode is active) */}
-      {activeSource === 'github' && (
-        <div className="px-5 py-3.5 bg-stone-900/40 border-b border-stone-800/80 flex flex-col gap-2.5 animate-fade-in">
+      {/* 2. Live GitHub PR Fetching Drawer (Smooth accordion slide) */}
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden bg-stone-900/40 flex flex-col gap-2.5 ${
+          activeSource === 'github'
+            ? 'max-h-96 opacity-100 border-b border-stone-800/80 px-5 py-3.5'
+            : 'max-h-0 opacity-0 border-b-0 px-5 py-0 pointer-events-none'
+        }`}
+      >
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <div className="relative flex-1">
               <GitPullRequest className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -335,8 +340,7 @@ jobs:
               <span>{fetchSuccess}</span>
             </div>
           )}
-        </div>
-      )}
+      </div>
 
       {/* 3. PR Metadata bar */}
       <div className="px-5 py-2.5 bg-stone-900/30 border-b border-stone-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
