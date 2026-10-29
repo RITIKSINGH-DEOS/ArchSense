@@ -48,18 +48,18 @@ Git Code Delta:
 {git_diff[:1500]}
 ```
 
-Provide a concise, 2-3 sentence executive architectural assessment explaining the security/resilience impact of this pull request on production and whether it is safe to merge."""
+Provide a concise, 2-3 sentence executive architectural assessment explaining the security and boundary risk of this pull request on production and whether it is safe to merge."""
 
         payload = {
             "model": self.model,
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are ArchSense AI, an autonomous architecture governance agent built for the Meta Global AI Developer Hackathon."
+                    "content": "You are ArchSense AI, an autonomous architecture governance agent built for the Meta Global AI Developer Hackathon. Keep internal reasoning concise and deliver the final assessment."
                 },
                 {"role": "user", "content": prompt}
             ],
-            "max_tokens": 500,
+            "max_tokens": 1200,
             "temperature": 0.2
         }
 
@@ -69,7 +69,7 @@ Provide a concise, 2-3 sentence executive architectural assessment explaining th
         }
 
         try:
-            with httpx.Client(timeout=10.0) as client:
+            with httpx.Client(timeout=15.0) as client:
                 response = client.post(BASETEN_ENDPOINT, json=payload, headers=headers)
                 if response.status_code == 200:
                     data = response.json()
@@ -77,12 +77,13 @@ Provide a concise, 2-3 sentence executive architectural assessment explaining th
                     if choices:
                         message = choices[0].get("message", {})
                         content = message.get("content")
-                        if content:
+                        if content and content.strip():
                             return content.strip()
                         # Fallback to reasoning content if completion was truncated
                         reasoning = message.get("reasoning_content")
-                        if reasoning:
-                            return reasoning.strip().split("\n")[-1]
+                        if reasoning and reasoning.strip():
+                            lines = [l.strip() for l in reasoning.strip().split("\n") if l.strip()]
+                            return lines[-1] if lines else None
                 else:
                     logger.warning(f"Baseten API returned status {response.status_code}: {response.text}")
         except Exception as e:
