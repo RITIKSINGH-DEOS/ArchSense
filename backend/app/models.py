@@ -50,3 +50,5 @@ class AuditResponse(BaseModel):
     edges: List[TopologyEdge]
     latency_ms: float
     engine: str = "Meta SAM 3.1 + Muse Spark (Pydantic Air-Gap Gate)"
+    ai_reasoning: Optional[str] = None
+    inference_provider: str = "Deterministic Graph Engine"

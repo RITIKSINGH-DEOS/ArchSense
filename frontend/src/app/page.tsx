@@ -20,6 +20,8 @@ export default function Home() {
   const [score, setScore] = useState<number>(SCENARIOS.scenarioA.score);
   const [status, setStatus] = useState<'REJECTED' | 'WARNING' | 'APPROVED'>(SCENARIOS.scenarioA.status);
   const [edges, setEdges] = useState<ArchitectureEdge[]>(SCENARIOS.scenarioA.edges);
+  const [aiReasoning, setAiReasoning] = useState<string | null>(null);
+  const [inferenceProvider, setInferenceProvider] = useState<string>('Baseten Cloud (Meta Muse Spark Open)');
   const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
 
   const handleScenarioChange = (scenario: AuditScenario) => {
@@ -29,6 +31,7 @@ export default function Home() {
     setScore(scenario.score);
     setStatus(scenario.status);
     setEdges(scenario.edges);
+    setAiReasoning(null);
     setIsAudited(false);
   };
 
@@ -70,6 +73,12 @@ export default function Home() {
         setScore(data.score);
         setStatus(data.status);
         setViolations(data.violations);
+        if (data.ai_reasoning) {
+          setAiReasoning(data.ai_reasoning);
+        }
+        if (data.inference_provider) {
+          setInferenceProvider(data.inference_provider);
+        }
         if (data.edges) {
           setEdges(data.edges.map((e: any) => ({
             id: e.id,
@@ -95,12 +104,14 @@ export default function Home() {
     setStatus(currentScenario.status);
     setViolations(currentScenario.violations);
     setEdges(currentScenario.edges);
+    setAiReasoning(null);
   };
 
   const handleReset = () => {
     setIsAudited(false);
     setDiffCode(currentScenario.diffCode);
     setEdges(currentScenario.edges.map(e => ({ ...e, isViolated: false })));
+    setAiReasoning(null);
   };
 
   return (
@@ -220,6 +231,8 @@ export default function Home() {
               violations={violations}
               isAudited={isAudited}
               isAuditing={isAuditing}
+              aiReasoning={aiReasoning}
+              inferenceProvider={inferenceProvider}
               onOpenExport={() => setIsExportOpen(true)}
             />
           </div>
@@ -229,7 +242,7 @@ export default function Home() {
         <footer className="mt-4 pb-8 flex items-center justify-center text-center">
           <div className="glass-pill px-4 py-2 rounded-full flex items-center space-x-2.5 text-[11px] font-mono text-stone-400">
             <Sparkles className="w-3.5 h-3.5 text-rose-400" />
-            <span>Built with Meta SAM 3.1 & Muse Spark · Meta Global AI Hackathon</span>
+            <span>Meta SAM 3.1 & Muse Spark · Baseten Cloud Compute · Meta Global AI Hackathon</span>
             <span className="text-stone-700">•</span>
             <span className="text-emerald-400">Deterministic Engine Active</span>
           </div>

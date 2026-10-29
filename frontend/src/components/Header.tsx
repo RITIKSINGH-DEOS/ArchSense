@@ -21,6 +21,9 @@ export const Header: React.FC<Props> = ({ onOpenExport }) => {
             <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/20 font-medium">
               Meta AI Hackathon
             </span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium hidden sm:inline">
+              Baseten Cloud · Muse Spark
+            </span>
           </div>
         </div>
 

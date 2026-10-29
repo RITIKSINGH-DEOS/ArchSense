@@ -14,6 +14,7 @@ import {
   Check,
   Share2,
   ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 
 interface Props {
@@ -22,6 +23,8 @@ interface Props {
   violations: Violation[];
   isAudited: boolean;
   isAuditing: boolean;
+  aiReasoning?: string | null;
+  inferenceProvider?: string;
   onOpenExport?: () => void;
 }
 
@@ -31,6 +34,8 @@ export const AuditStation: React.FC<Props> = ({
   violations,
   isAudited,
   isAuditing,
+  aiReasoning,
+  inferenceProvider,
   onOpenExport,
 }) => {
   const [copiedReview, setCopiedReview] = useState<boolean>(false);
@@ -72,6 +77,11 @@ export const AuditStation: React.FC<Props> = ({
         md += `- **Remediation**: ${v.remediation}\n\n`;
       });
     }
+
+    if (aiReasoning) {
+      md += `\n### 🤖 Meta Muse Spark Semantic Reasoning (Baseten Cloud)\n${aiReasoning}\n\n`;
+    }
+
     md += `\n*Automated review by ArchSense · Meta Global AI Hackathon*`;
 
     navigator.clipboard.writeText(md);
@@ -285,8 +295,18 @@ export const AuditStation: React.FC<Props> = ({
               <div className="p-3 rounded-xl glass-inner font-mono text-xs text-stone-200 space-y-1">
                 <div>Score: <span className="font-bold text-white">{score}/100</span></div>
                 <div>Verdict: <span className={`font-bold ${isApproved ? 'text-emerald-400' : 'text-rose-400'}`}>{status}</span></div>
-                <div>Engine: <span className="text-stone-400">Meta SAM 3.1 + Muse Spark</span></div>
+                <div>Inference: <span className="text-emerald-400">{inferenceProvider || 'Baseten Cloud (Muse Spark Open)'}</span></div>
               </div>
+
+              {aiReasoning && (
+                <div className="p-3 rounded-xl glass-inner border border-rose-500/20 text-xs text-stone-200 space-y-1.5">
+                  <div className="flex items-center space-x-1.5 text-rose-400 font-semibold text-[11px] font-sans">
+                    <Sparkles className="w-3.5 h-3.5 text-rose-400" />
+                    <span>Meta Muse Spark Reasoning (Baseten Cloud):</span>
+                  </div>
+                  <p className="text-stone-300 italic font-sans leading-relaxed text-xs">{aiReasoning}</p>
+                </div>
+              )}
             </div>
           </div>
         )}

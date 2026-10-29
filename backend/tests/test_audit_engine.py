@@ -1,6 +1,7 @@
 import pytest
-from app.models import TopologyNode, TopologyEdge, AuditRequest
+from app.models import TopologyNode, TopologyEdge, AuditRequest, Violation
 from app.graph_engine import ArchitecturalGraphEngine
+from app.baseten_client import BasetenReasoningClient
 
 def test_direct_database_bypass_detection():
     """Scenario A: Verify direct Client-to-DB bypass is flagged as CRITICAL and REJECTED."""
@@ -72,3 +73,14 @@ def test_deterministic_pydantic_schema_validation():
     """Verify strictly-typed Pydantic boundary assertion rejects invalid protocols."""
     with pytest.raises(Exception):
         TopologyEdge(id="bad", source="a", target="b", protocol="INVALID_PROTOCOL")
+
+def test_baseten_client_configuration_and_graceful_fallback():
+    """Verify Baseten reasoning client handles configured and unconfigured states safely."""
+    client_unconfigured = BasetenReasoningClient(api_key="")
+    assert not client_unconfigured.is_configured()
+    res = client_unconfigured.generate_architectural_assessment("PR #1", "diff", [])
+    assert res is None
+
+    client_configured = BasetenReasoningClient(api_key="b10_mock_key")
+    assert client_configured.is_configured()
+    assert client_configured.model == "meta-models/muse-spark-open-1026"
