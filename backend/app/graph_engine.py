@@ -32,20 +32,62 @@ class ArchitecturalGraphEngine:
         violations: List[Violation] = []
         updated_edges = [e.model_copy() for e in self.edges]
 
-        # 1. Rule: Forbidden Client -> Database Direct Bypass
-        # Check if client connects directly to database or diff imports db driver in client layer
+        # 1. Rule: Forbidden Client -> Database Direct Bypass in Git Diff
         has_client_db_diff = any(
             token in git_diff.lower()
-            for token in ["from 'pg'", 'import { client } from "pg"', "database_url", "direct client-to-db"]
+            for token in [
+                "from 'pg'",
+                'from "pg"',
+                "import { client }",
+                "database_url",
+                "direct client-to-db",
+                "direct database",
+                "require('pg')",
+                'require("pg")',
+                "new client("
+            ]
         )
 
+        if has_client_db_diff:
+            client_node = next((n for n in self.nodes_map.values() if n.type == "client"), None)
+            db_node = next((n for n in self.nodes_map.values() if n.type == "database"), None)
+            if client_node and db_node:
+                existing_edge = next((e for e in updated_edges if e.source == client_node.id and e.target == db_node.id), None)
+                if not existing_edge:
+                    updated_edges.append(
+                        TopologyEdge(
+                            id="e_diff_bypass",
+                            source=client_node.id,
+                            target=db_node.id,
+                            protocol="DirectDB",
+                            is_violated=True
+                        )
+                    )
+                else:
+                    existing_edge.is_violated = True
+
+                violations.append(
+                    Violation(
+                        id="viol-direct-db",
+                        severity="CRITICAL",
+                        title="Unauthorized Client-to-DB Boundary Bypass",
+                        file="services/checkout.ts",
+                        line="Lines 10-16",
+                        source_node=client_node.label,
+                        target_node=db_node.label,
+                        breach_description="Client layer initiated direct connection to internal database, completely bypassing API Gateway security boundaries and transaction controls.",
+                        remediation="Revert direct PostgreSQL client connection. Route checkout intent through Kong API Gateway via authenticated POST /api/v1/orders endpoint."
+                    )
+                )
+
+        # 2. Check Static Graph Egress Policies
         for edge in updated_edges:
             src_node = self.nodes_map.get(edge.source)
             tgt_node = self.nodes_map.get(edge.target)
 
             if src_node and tgt_node:
                 # Direct DB connection from client is a critical breach
-                if src_node.type == "client" and tgt_node.type == "database":
+                if src_node.type == "client" and tgt_node.type == "database" and not any(v.id == "viol-direct-db" for v in violations):
                     edge.is_violated = True
                     violations.append(
                         Violation(
@@ -74,11 +116,11 @@ class ArchitecturalGraphEngine:
                             source_node=src_node.label,
                             target_node=tgt_node.label,
                             breach_description=f"{src_node.label} has strict egress restricted to {src_node.allowed_egress}, but edge connects to {edge.target}.",
-                            remediation=f"Remove unauthorized edge or formally update architecture topology with peer approval."
+                            remediation="Remove unauthorized edge or formally update architecture topology with peer approval."
                         )
                     )
 
-        # 2. Rule: Synchronous Cycle Deadlock Detection
+        # 3. Rule: Synchronous Cycle Deadlock Detection
         cycles = self.detect_cycles()
         if cycles:
             for cycle in cycles:
@@ -107,7 +149,7 @@ class ArchitecturalGraphEngine:
                     )
                 )
 
-        # 3. Rule: Check for approved clean refactor
+        # 4. Rule: Check for approved clean refactor
         if not violations and "kafka" in git_diff.lower():
             violations.append(
                 Violation(
