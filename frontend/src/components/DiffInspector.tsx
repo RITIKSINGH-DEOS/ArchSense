@@ -270,6 +270,7 @@ jobs:
                 type="text"
                 value={githubUrl}
                 onChange={(e) => setGithubUrl(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleFetchGitHubPR(); } }}
                 placeholder="Enter GitHub PR URL (e.g. https://github.com/facebook/react/pull/28000)"
                 className="w-full pl-9 pr-3 py-2 bg-stone-950/80 border border-stone-700/80 rounded-xl text-xs text-stone-100 placeholder-stone-500 font-mono focus:outline-none focus:border-amber-500/80 transition-all duration-200"
               />
