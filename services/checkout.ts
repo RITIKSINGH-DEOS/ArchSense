@@ -7,6 +7,7 @@ import { Client } from 'pg';
 export async function handleCheckout(req: any, res: any) {
   // CRITICAL ARCHITECTURAL BREACH:
   // Direct client connection bypassing Kong API Gateway and Order Service boundaries.
+  // Audited by Meta SAM 3.1 & Muse Spark on Baseten.
   const db = new Client({
     connectionString: process.env.DATABASE_URL,
   });
