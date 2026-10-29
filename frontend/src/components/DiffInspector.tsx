@@ -12,9 +12,6 @@ import {
   GitPullRequest,
   Check,
   Copy,
-  ExternalLink,
-  Code2,
-  Sliders,
   AlertCircle,
   Terminal,
 } from 'lucide-react';
@@ -55,7 +52,8 @@ export const DiffInspector: React.FC<Props> = ({
   isAudited,
   onReset,
 }) => {
-  const [activeMode, setActiveMode] = useState<'preset' | 'github' | 'custom'>('preset');
+  const [activeSource, setActiveSource] = useState<'preset' | 'github'>('preset');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [githubUrl, setGithubUrl] = useState<string>('https://github.com/facebook/react/pull/28000');
   const [isFetchingPR, setIsFetchingPR] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -185,7 +183,7 @@ jobs:
 
   return (
     <div className="glass-panel rounded-3xl overflow-hidden flex flex-col w-full shadow-2xl transition-all duration-300">
-      {/* 1. Header Toolbar with Mode Switcher */}
+      {/* 1. Header Toolbar with Source Selector & Edit Toggle */}
       <div className="px-5 py-3 border-b border-stone-800/80 bg-stone-950/60 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-2.5">
           <FileDiff className="w-4 h-4 text-rose-400" />
@@ -194,56 +192,71 @@ jobs:
           </h3>
         </div>
 
-        {/* Segmented Mode Selector: Presets vs Live GitHub PR vs Custom Edit */}
-        <div className="flex items-center space-x-1.5 bg-stone-950/80 p-1 rounded-xl border border-stone-800 text-xs">
+        <div className="flex items-center flex-wrap gap-2">
+          {/* Segmented Mode Selector: Presets vs Live GitHub PR */}
+          <div className="flex items-center space-x-1 bg-stone-950/80 p-1 rounded-xl border border-stone-800 text-xs">
+            <button
+              onClick={() => setActiveSource('preset')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 ${
+                activeSource === 'preset'
+                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm'
+                  : 'text-stone-400 hover:text-stone-200'
+              }`}
+            >
+              <Sparkles className="w-3 h-3 text-rose-400" />
+              <span>Preset Scenarios (Judge Demo)</span>
+            </button>
+
+            <button
+              onClick={() => setActiveSource('github')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 ${
+                activeSource === 'github'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                  : 'text-stone-400 hover:text-stone-200'
+              }`}
+            >
+              <GitPullRequest className="w-3 h-3 text-amber-400" />
+              <span>Live GitHub PR (Real World)</span>
+            </button>
+          </div>
+
+          {/* Edit / View Toggle */}
           <button
-            onClick={() => setActiveMode('preset')}
-            className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 ${
-              activeMode === 'preset'
-                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm'
-                : 'text-stone-400 hover:text-stone-200'
+            onClick={() => setIsEditing(!isEditing)}
+            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all duration-200 ${
+              isEditing
+                ? 'bg-amber-500/15 border-amber-500/50 text-amber-300 font-semibold shadow-sm'
+                : 'glass-pill text-stone-300 hover:text-white'
             }`}
           >
-            <Sparkles className="w-3 h-3 text-rose-400" />
-            <span>Preset Scenarios (Judge Demo)</span>
+            {isEditing ? (
+              <>
+                <Eye className="w-3.5 h-3.5" />
+                <span className="font-sans">View</span>
+              </>
+            ) : (
+              <>
+                <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                <span className="font-sans">Edit Diff</span>
+              </>
+            )}
           </button>
 
           <button
-            onClick={() => setActiveMode('github')}
-            className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 ${
-              activeMode === 'github'
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
-                : 'text-stone-400 hover:text-stone-200'
-            }`}
-          >
-            <GitPullRequest className="w-3 h-3 text-amber-400" />
-            <span>Live GitHub PR (Real World)</span>
-          </button>
-
-          <button
-            onClick={() => setActiveMode('custom')}
-            className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-all duration-200 flex items-center space-x-1.5 ${
-              activeMode === 'custom'
-                ? 'bg-stone-800 text-white border border-stone-700 shadow-sm'
-                : 'text-stone-400 hover:text-stone-200'
-            }`}
-          >
-            <Edit3 className="w-3 h-3 text-stone-400" />
-            <span>Edit Diff</span>
-          </button>
-
-          <button
-            onClick={onReset}
-            className="p-1.5 rounded-lg glass-pill text-stone-400 hover:text-white transition-colors duration-200 ml-1"
+            onClick={() => {
+              setIsEditing(false);
+              onReset();
+            }}
+            className="p-1.5 rounded-xl glass-pill text-stone-400 hover:text-white transition-colors duration-200"
             title="Reset Diff"
           >
-            <RefreshCw className="w-3 h-3" />
+            <RefreshCw className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
       {/* 2. Live GitHub PR Fetching Drawer (Only shown when Live GitHub PR mode is active) */}
-      {activeMode === 'github' && (
+      {activeSource === 'github' && (
         <div className="px-5 py-3.5 bg-stone-900/40 border-b border-stone-800/80 flex flex-col gap-2.5 animate-fade-in">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <div className="relative flex-1">
@@ -349,7 +362,7 @@ jobs:
             <GitBranch className="w-3 h-3 text-stone-500" />
             <span className="text-rose-300 font-medium">{prBranch}</span>
           </span>
-          {activeMode === 'custom' && (
+          {isEditing && (
             <span className="text-amber-400 text-[10px] font-semibold animate-pulse">
               ● Edit Mode
             </span>
@@ -359,12 +372,12 @@ jobs:
 
       {/* 4. Diff Content Area */}
       <div className="glass-inner rounded-2xl m-3 font-mono text-xs overflow-y-auto h-[320px] shadow-inner">
-        {activeMode === 'custom' ? (
+        {isEditing ? (
           <div className="p-4 h-full animate-fade-in">
             <textarea
               value={diffCode}
               onChange={(e) => onDiffChange(e.target.value)}
-              placeholder="Paste any unified Git diff here..."
+              placeholder="Paste or edit any unified Git diff here..."
               className="w-full h-full p-3 bg-stone-900/60 text-stone-100 font-mono text-xs rounded-xl border border-stone-700/80 focus:outline-none focus:border-rose-500 leading-relaxed resize-none transition-all duration-200"
             />
           </div>
