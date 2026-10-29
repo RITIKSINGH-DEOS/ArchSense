@@ -1,0 +1,112 @@
+name: ArchSense Boundary Governance Audit
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  archsense-audit:
+    name: Meta AI Architecture Boundary Guard
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract Unified Git Diff
+        id: git_diff
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff origin/${{ github.base_ref }}...HEAD > pr.diff
+          else
+            git diff HEAD~1...HEAD > pr.diff
+          fi
+          echo "Extracted $(wc -l < pr.diff) lines of unified diff."
+
+      - name: Run ArchSense Boundary Audit (Meta SAM 3.1 & Muse Spark)
+        id: run_audit
+        env:
+          ARCHSENSE_API: "https://archsense.onrender.com/api/audit"
+          PR_TITLE: "${{ github.event.pull_request.title || 'Manual Trigger' }}"
+        run: |
+          # Read and safely escape git diff for JSON payload
+          DIFF_PAYLOAD=$(cat pr.diff | jq -s -R .)
+
+          # Query ArchSense Governance Core API
+          RESPONSE=$(curl -s -X POST "$ARCHSENSE_API" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"pr_title\": \"$PR_TITLE\",
+              \"git_diff\": $DIFF_PAYLOAD,
+              \"nodes\": [
+                {\"id\": \"client\", \"label\": \"Web Client\", \"type\": \"client\", \"allowed_egress\": [\"gateway\"]},
+                {\"id\": \"gateway\", \"label\": \"Kong API Gateway\", \"type\": \"gateway\", \"allowed_egress\": [\"order-service\"]},
+                {\"id\": \"order-service\", \"label\": \"Order Service\", \"type\": \"service\", \"allowed_egress\": [\"postgres-db\", \"payment-service\"]},
+                {\"id\": \"postgres-db\", \"label\": \"PostgreSQL DB\", \"type\": \"database\", \"allowed_egress\": []},
+                {\"id\": \"payment-service\", \"label\": \"Payment Service\", \"type\": \"service\", \"allowed_egress\": []}
+              ],
+              \"edges\": [
+                {\"id\": \"e1\", \"source\": \"client\", \"target\": \"gateway\", \"protocol\": \"REST\"},
+                {\"id\": \"e2\", \"source\": \"gateway\", \"target\": \"order-service\", \"protocol\": \"gRPC\"},
+                {\"id\": \"e3\", \"source\": \"order-service\", \"target\": \"postgres-db\", \"protocol\": \"DirectDB\"},
+                {\"id\": \"e4\", \"source\": \"order-service\", \"target\": \"payment-service\", \"protocol\": \"EventBus\"}
+              ]
+            }")
+
+          echo "AUDIT_RESPONSE<<EOF" >> $GITHUB_ENV
+          echo "$RESPONSE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+          STATUS=$(echo "$RESPONSE" | jq -r '.status // "ERROR"')
+          SCORE=$(echo "$RESPONSE" | jq -r '.score // 0')
+          echo "STATUS=$STATUS" >> $GITHUB_ENV
+          echo "SCORE=$SCORE" >> $GITHUB_ENV
+
+      - name: Post Governance Decision to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = process.env.STATUS;
+            const score = process.env.SCORE;
+            let response = {};
+            try {
+              response = JSON.parse(process.env.AUDIT_RESPONSE);
+            } catch(e) {}
+
+            const isApproved = status === 'APPROVED';
+            const icon = isApproved ? '✅' : '❌';
+            const reasoning = response.ai_reasoning || 'Architecture boundary verification complete.';
+            const violations = response.violations || [];
+
+            let comment = `### ${icon} ArchSense Governance Verdict: **${status}** (${score}/100)\n\n`;
+            comment += `> Autonomous Architecture Boundary Audit powered by **Meta SAM 3.1 & Muse Spark on Baseten**\n\n`;
+
+            if (isApproved) {
+              comment += `✨ **Clean Clearance:** All code diff changes adhere strictly to declared microservice boundaries.\n`;
+            } else {
+              comment += `⚠️ **Boundary Breaches Detected (${violations.length}):**\n\n`;
+              violations.forEach((v, idx) => {
+                comment += `${idx + 1}. **${v.title}** (\`${v.severity}\`)\n   - File: \`${v.file}\` (${v.line})\n   - Breach: ${v.breach_description}\n   - Remediation: ${v.remediation}\n\n`;
+              });
+            }
+
+            comment += `#### 🤖 Meta Muse Spark Semantic Assessment\n${reasoning}\n\n`;
+            comment += `---\n*Automated review by ArchSense · Meta Global AI Hackathon*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+            if (!isApproved) {
+              core.setFailed(`ArchSense Architecture Audit failed with score ${score}/100: ${status}`);
+            }

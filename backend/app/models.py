@@ -52,3 +52,20 @@ class AuditResponse(BaseModel):
     engine: str = "Meta SAM 3.1 + Muse Spark (Pydantic Air-Gap Gate)"
     ai_reasoning: Optional[str] = None
     inference_provider: str = "Deterministic Graph Engine"
+
+class GitHubPRRequest(BaseModel):
+    url: str
+
+class GitHubPRResponse(BaseModel):
+    repo: str
+    pr_number: int
+    title: str
+    author: str
+    author_avatar: Optional[str] = None
+    branch: str
+    base_branch: str
+    diff: str
+    additions: int = 0
+    deletions: int = 0
+    changed_files: int = 0
+    html_url: str

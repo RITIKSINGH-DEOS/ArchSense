@@ -17,7 +17,7 @@ class BasetenReasoningClient:
     """
 
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or os.getenv("BASETEN_API_KEY", "").strip()
+        self.api_key = api_key.strip() if api_key is not None else os.getenv("BASETEN_API_KEY", "").strip()
         self.model = os.getenv("BASETEN_MODEL", DEFAULT_MODEL)
 
     def is_configured(self) -> bool:

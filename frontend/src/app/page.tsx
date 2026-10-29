@@ -24,6 +24,13 @@ export default function Home() {
   const [inferenceProvider, setInferenceProvider] = useState<string>('Baseten Cloud (Meta Muse Spark Open)');
   const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
 
+  // Dynamic PR Metadata (Preset or Live GitHub PR)
+  const [prTitle, setPrTitle] = useState<string>(SCENARIOS.scenarioA.prTitle);
+  const [prAuthor, setPrAuthor] = useState<string>(SCENARIOS.scenarioA.prAuthor);
+  const [prBranch, setPrBranch] = useState<string>(SCENARIOS.scenarioA.prBranch);
+  const [prNumber, setPrNumber] = useState<number | string>(142);
+  const [prRepo, setPrRepo] = useState<string | null>(null);
+
   const handleScenarioChange = (scenario: AuditScenario) => {
     setCurrentScenario(scenario);
     setDiffCode(scenario.diffCode);
@@ -33,6 +40,29 @@ export default function Home() {
     setEdges(scenario.edges);
     setAiReasoning(null);
     setIsAudited(false);
+    setPrTitle(scenario.prTitle);
+    setPrAuthor(scenario.prAuthor);
+    setPrBranch(scenario.prBranch);
+    setPrNumber(scenario.id === 'scenarioA' ? 142 : scenario.id === 'scenarioB' ? 189 : 204);
+    setPrRepo(null);
+  };
+
+  const handleLoadedGitHubPR = (prData: {
+    repo: string;
+    pr_number: number;
+    title: string;
+    author: string;
+    branch: string;
+    diff: string;
+  }) => {
+    setPrTitle(prData.title);
+    setPrAuthor(prData.author);
+    setPrBranch(prData.branch);
+    setPrNumber(prData.pr_number);
+    setPrRepo(prData.repo);
+    setDiffCode(prData.diff);
+    setIsAudited(false);
+    setAiReasoning(null);
   };
 
   const handleRunAudit = async () => {
@@ -45,7 +75,7 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           scenario_id: currentScenario.id,
-          pr_title: currentScenario.prTitle,
+          pr_title: prTitle,
           git_diff: diffCode,
           nodes: currentScenario.nodes.map(n => ({
             id: n.id,
@@ -152,7 +182,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Evaluator Scenario Selector */}
+        {/* Evaluator Scenario Selector (Quick 30s selection for judges) */}
         <ScenarioPicker
           currentScenarioId={currentScenario.id}
           onSelect={handleScenarioChange}
@@ -197,11 +227,14 @@ export default function Home() {
 
           <div className="w-full">
             <DiffInspector
-              prTitle={currentScenario.prTitle}
-              prAuthor={currentScenario.prAuthor}
-              prBranch={currentScenario.prBranch}
+              prTitle={prTitle}
+              prAuthor={prAuthor}
+              prBranch={prBranch}
+              prNumber={prNumber}
+              prRepo={prRepo}
               diffCode={diffCode}
               onDiffChange={setDiffCode}
+              onLoadedGitHubPR={handleLoadedGitHubPR}
               onAudit={handleRunAudit}
               isAuditing={isAuditing}
               isAudited={isAudited}
@@ -258,7 +291,7 @@ export default function Home() {
         score={score}
         status={status}
         violations={violations}
-        prTitle={currentScenario.prTitle}
+        prTitle={prTitle}
       />
     </div>
   );

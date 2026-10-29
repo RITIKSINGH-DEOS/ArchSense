@@ -3,7 +3,9 @@ import time
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.models import AuditRequest, AuditResponse
+import re
+import httpx
+from app.models import AuditRequest, AuditResponse, GitHubPRRequest, GitHubPRResponse
 from app.graph_engine import ArchitecturalGraphEngine
 from app.baseten_client import BasetenReasoningClient
 
@@ -78,6 +80,77 @@ async def audit_pull_request(request: AuditRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Audit execution error: {str(e)}")
+
+@app.post("/api/github/pr", response_model=GitHubPRResponse)
+async def fetch_github_pr(request: GitHubPRRequest):
+    """
+    Fetches real Pull Request metadata and unified diff directly from GitHub.
+    Accepts URLs like:
+      - https://github.com/owner/repo/pull/123
+      - https://github.com/owner/repo/pull/123/files
+      - owner/repo#123
+      - owner/repo/pull/123
+    """
+    pattern = r"(?:https?://github\.com/)?([^/]+)/([^/#]+)(?:/pull/|#)(\d+)"
+    match = re.search(pattern, request.url.strip())
+    if not match:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid GitHub PR URL. Format: https://github.com/owner/repo/pull/123 or owner/repo#123"
+        )
+
+    owner, repo, pr_num = match.groups()
+    api_url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_num}"
+
+    headers = {
+        "User-Agent": "ArchSense-Governance-Agent",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    github_token = os.getenv("GITHUB_TOKEN")
+    if github_token:
+        headers["Authorization"] = f"token {github_token}"
+
+    diff_headers = {
+        "User-Agent": "ArchSense-Governance-Agent",
+        "Accept": "application/vnd.github.v3.diff"
+    }
+    if github_token:
+        diff_headers["Authorization"] = f"token {github_token}"
+
+    try:
+        async with httpx.AsyncClient(verify=False, follow_redirects=True, timeout=15.0) as client:
+            meta_res = await client.get(api_url, headers=headers)
+            if meta_res.status_code == 404:
+                raise HTTPException(status_code=404, detail=f"PR #{pr_num} not found in repository {owner}/{repo}.")
+            elif meta_res.status_code != 200:
+                raise HTTPException(status_code=meta_res.status_code, detail=f"GitHub API error ({meta_res.status_code}): {meta_res.text}")
+
+            meta = meta_res.json()
+
+            diff_res = await client.get(api_url, headers=diff_headers)
+            if diff_res.status_code != 200:
+                raise HTTPException(status_code=diff_res.status_code, detail="Could not retrieve PR git diff from GitHub.")
+
+            diff_text = diff_res.text
+
+        return GitHubPRResponse(
+            repo=f"{owner}/{repo}",
+            pr_number=int(pr_num),
+            title=meta.get("title", f"PR #{pr_num}"),
+            author=meta.get("user", {}).get("login", "unknown"),
+            author_avatar=meta.get("user", {}).get("avatar_url"),
+            branch=meta.get("head", {}).get("ref", "unknown-branch"),
+            base_branch=meta.get("base", {}).get("ref", "main"),
+            diff=diff_text,
+            additions=meta.get("additions", 0),
+            deletions=meta.get("deletions", 0),
+            changed_files=meta.get("changed_files", 0),
+            html_url=meta.get("html_url", f"https://github.com/{owner}/{repo}/pull/{pr_num}")
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch GitHub PR: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
