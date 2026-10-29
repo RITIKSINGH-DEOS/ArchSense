@@ -223,10 +223,10 @@ jobs:
           {/* Edit / View Toggle */}
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all duration-200 ${
+            className={`flex items-center justify-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all duration-200 w-24 flex-shrink-0 ${
               isEditing
                 ? 'bg-amber-500/15 border-amber-500/50 text-amber-300 font-semibold shadow-sm'
-                : 'glass-pill text-stone-300 hover:text-white'
+                : 'border-stone-800 glass-pill text-stone-300 hover:text-white'
             }`}
           >
             {isEditing ? (
@@ -366,27 +366,31 @@ jobs:
             <GitBranch className="w-3 h-3 text-stone-500" />
             <span className="text-rose-300 font-medium">{prBranch}</span>
           </span>
-          {isEditing && (
-            <span className="text-amber-400 text-[10px] font-semibold animate-pulse">
-              ● Edit Mode
-            </span>
-          )}
+          <span
+            className={`text-amber-400 text-[10px] font-semibold transition-opacity duration-200 flex items-center gap-1 w-20 justify-end ${
+              isEditing ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span>Edit Mode</span>
+          </span>
         </div>
       </div>
 
       {/* 4. Diff Content Area */}
       <div className="glass-inner rounded-2xl m-3 font-mono text-xs overflow-y-auto h-[320px] shadow-inner">
         {isEditing ? (
-          <div className="p-4 h-full animate-fade-in">
+          <div className="p-3 h-full animate-fade-in">
             <textarea
               value={diffCode}
               onChange={(e) => onDiffChange(e.target.value)}
               placeholder="Paste or edit any unified Git diff here..."
-              className="w-full h-full p-3 bg-stone-900/60 text-stone-100 font-mono text-xs rounded-xl border border-stone-700/80 focus:outline-none focus:border-rose-500 leading-relaxed resize-none transition-all duration-200"
+              className="w-full h-full p-2.5 bg-stone-900/40 text-stone-100 font-mono text-xs rounded-xl border border-amber-500/30 focus:outline-none focus:border-amber-400/60 leading-relaxed resize-none transition-all duration-200"
+              spellCheck={false}
             />
           </div>
         ) : (
-          <div className="p-4 space-y-0.5 animate-fade-in">
+          <div className="p-3 space-y-0.5 animate-fade-in">
             {diffCode.split('\n').map((line, idx) => {
               let bg = 'text-stone-300';
               if (line.startsWith('+') && !line.startsWith('+++')) {
