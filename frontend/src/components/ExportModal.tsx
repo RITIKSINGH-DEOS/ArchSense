@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArchitectureNode, ArchitectureEdge, Violation } from '../data/mockScenarios';
 import { X, Copy, Check, Download, FileCode, Share2, Bot, Code } from 'lucide-react';
 
@@ -27,6 +27,17 @@ export const ExportModal: React.FC<Props> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'mermaid' | 'json' | 'pr-markdown'>('mermaid');
   const [copied, setCopied] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -145,9 +156,15 @@ export const ExportModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-in">
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-in overflow-hidden"
+    >
       {/* Strict Fixed-Height Modal Card (Zero jumping between tabs) */}
-      <div className="glass-panel relative w-full max-w-2xl h-[580px] max-h-[90vh] rounded-3xl overflow-hidden flex flex-col transition-all duration-300">
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="glass-panel relative w-full max-w-2xl h-[580px] max-h-[90vh] rounded-3xl overflow-hidden flex flex-col transition-all duration-300 overscroll-contain"
+      >
         {/* Modal Header */}
         <div className="p-4 border-b border-stone-800/80 flex items-center justify-between bg-stone-950/60 backdrop-blur-xl flex-shrink-0">
           <div className="flex items-center space-x-2.5">
