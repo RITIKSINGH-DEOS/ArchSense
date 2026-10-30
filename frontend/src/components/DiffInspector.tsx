@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   GitBranch,
   User,
@@ -130,6 +130,17 @@ export const DiffInspector: React.FC<Props> = ({
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [fetchSuccess, setFetchSuccess] = useState<string | null>(null);
   const [showWorkflowModal, setShowWorkflowModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (showWorkflowModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showWorkflowModal]);
   const [copiedWorkflow, setCopiedWorkflow] = useState<boolean>(false);
 
   const workflowYaml = `# .github/workflows/archsense-audit.yml
@@ -526,9 +537,15 @@ jobs:
 
       {/* 6. GitHub Actions CI/CD Modal */}
       {showWorkflowModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="glass-panel border border-stone-700/80 rounded-3xl max-w-2xl w-full p-6 shadow-2xl flex flex-col gap-4">
-            <div className="flex items-center justify-between">
+        <div 
+          onClick={() => setShowWorkflowModal(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in overflow-hidden"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="glass-panel border border-stone-700/80 rounded-3xl max-w-2xl w-full max-h-[90vh] p-6 shadow-2xl flex flex-col gap-4 overflow-hidden overscroll-contain"
+          >
+            <div className="flex items-center justify-between flex-shrink-0">
               <div className="flex items-center space-x-2.5">
                 <GitPullRequest className="w-5 h-5 text-amber-400" />
                 <h3 className="font-serif text-lg font-normal text-stone-100">
@@ -537,13 +554,13 @@ jobs:
               </div>
               <button
                 onClick={() => setShowWorkflowModal(false)}
-                className="text-stone-400 hover:text-white text-xs px-2.5 py-1 rounded-xl glass-pill"
+                className="text-stone-400 hover:text-white text-xs px-2.5 py-1 rounded-xl glass-pill transition-colors"
               >
                 Close
               </button>
             </div>
 
-            <p className="text-xs text-stone-300 leading-relaxed font-sans">
+            <p className="text-xs text-stone-300 leading-relaxed font-sans flex-shrink-0">
               To automatically audit every real Pull Request in your repository, add this workflow file to{' '}
               <code className="text-amber-300 bg-stone-900 px-1.5 py-0.5 rounded font-mono">
                 .github/workflows/archsense-audit.yml
@@ -551,10 +568,10 @@ jobs:
               . On every PR, GitHub Actions extracts the diff, sends it to ArchSense API, and blocks merge if rules are breached.
             </p>
 
-            <div className="relative glass-inner rounded-xl p-3 font-mono text-xs overflow-x-auto max-h-[260px] border border-stone-800">
+            <div className="relative glass-inner rounded-xl p-3 font-mono text-xs overflow-y-auto overflow-x-auto max-h-[340px] border border-stone-800 overscroll-contain">
               <button
                 onClick={handleCopyWorkflow}
-                className="absolute top-2 right-2 px-2.5 py-1 rounded-lg glass-pill text-xs flex items-center space-x-1 text-stone-300 hover:text-white"
+                className="sticky float-right top-0 z-10 px-2.5 py-1 rounded-lg glass-pill text-xs flex items-center space-x-1 text-stone-300 hover:text-white bg-stone-900/90 backdrop-blur-sm"
               >
                 {copiedWorkflow ? (
                   <>
@@ -568,7 +585,7 @@ jobs:
                   </>
                 )}
               </button>
-              <pre className="text-stone-300 leading-relaxed">{workflowYaml}</pre>
+              <pre className="text-stone-300 leading-relaxed pt-1">{workflowYaml}</pre>
             </div>
           </div>
         </div>
