@@ -202,7 +202,7 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="w-full h-[460px]">
+          <div className="w-full h-[490px]">
             <ArchitectureCanvas
               nodes={currentScenario.nodes}
               edges={edges}

@@ -24,6 +24,7 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
       reader.onload = (e) => {
         setCustomImage(e.target?.result as string);
         setActiveTab('upload');
+        setShowSamMasks(true);
       };
       reader.readAsDataURL(file);
     }
@@ -72,12 +73,13 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
             onClick={() => setShowSamMasks(!showSamMasks)}
             className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl border transition-all duration-200 ${
               showSamMasks
-                ? 'bg-rose-500/15 border-rose-500/40 text-rose-300 font-medium shadow-sm'
+                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-semibold shadow-sm'
                 : 'bg-stone-900/70 border-stone-800 text-stone-400 hover:text-stone-200'
             }`}
           >
-            <Scan className="w-3.5 h-3.5" />
+            <Scan className={`w-3.5 h-3.5 ${showSamMasks ? 'text-emerald-400' : 'text-stone-400'}`} />
             <span className="font-sans">SAM 3.1 Masks: {showSamMasks ? 'ON' : 'OFF'}</span>
+            {showSamMasks && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />}
           </button>
         </div>
       </div>
@@ -250,13 +252,13 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
           className="relative flex-1 glass-inner rounded-2xl m-3 p-6 flex flex-col items-center justify-center min-h-[420px] animate-fade-in shadow-inner"
         >
           {customImage ? (
-            <div className="relative w-full h-full flex flex-col items-center justify-center animate-fade-in">
-              <div className="relative max-w-full max-h-[300px] rounded-2xl overflow-hidden border border-stone-700 shadow-2xl">
+            <div className="relative w-full h-full flex flex-col items-center justify-between py-2 animate-fade-in">
+              <div className="relative max-w-full max-h-[240px] rounded-2xl overflow-hidden border border-stone-700/80 shadow-2xl flex items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={customImage}
                   alt="Custom Architecture Diagram"
-                  className="max-h-[300px] object-contain rounded-2xl"
+                  className="max-h-[240px] w-auto object-contain rounded-2xl"
                 />
 
                 {showSamMasks && (
@@ -275,17 +277,17 @@ export const ArchitectureCanvas: React.FC<Props> = ({ nodes, edges, isAudited })
                 )}
               </div>
 
-              <div className="mt-4 flex items-center space-x-3">
-                <div className="flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-emerald-950/60 border border-emerald-700/60 text-xs text-emerald-300">
+              <div className="mt-4 mb-2 flex items-center space-x-3">
+                <div className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 shadow-md">
                   <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Meta SAM 3.1: Segmented</span>
+                  <span className="font-sans font-medium">Meta SAM 3.1: Segmented</span>
                 </div>
                 <button
                   onClick={() => setCustomImage(null)}
-                  className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-xs text-stone-200 transition-colors duration-200 border border-stone-700"
+                  className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-stone-900/90 hover:bg-stone-800 text-xs text-stone-300 hover:text-white transition-all duration-200 border border-stone-700/80 shadow-sm"
                 >
                   <X className="w-3.5 h-3.5 text-stone-400" />
-                  <span>Remove</span>
+                  <span className="font-sans">Remove</span>
                 </button>
               </div>
             </div>
