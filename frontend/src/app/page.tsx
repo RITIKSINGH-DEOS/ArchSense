@@ -102,15 +102,11 @@ export default function Home() {
 
       for (const endpoint of endpoints) {
         try {
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 4000);
           const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
-            signal: controller.signal
           });
-          clearTimeout(timer);
 
           if (response.ok) {
             auditData = await response.json();
