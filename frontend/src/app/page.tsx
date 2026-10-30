@@ -69,48 +69,66 @@ export default function Home() {
     setIsAuditing(true);
 
     try {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://archsense.onrender.com';
-      const response = await fetch(`${apiBaseUrl}/api/audit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          scenario_id: currentScenario.id,
-          pr_title: prTitle,
-          git_diff: diffCode,
-          nodes: currentScenario.nodes.map(n => ({
-            id: n.id,
-            label: n.label,
-            type: n.type,
-            x: n.x,
-            y: n.y,
-            width: n.width,
-            height: n.height,
-            allowed_egress: n.allowedEgress,
-            color: n.color
-          })),
-          edges: currentScenario.edges.map(e => ({
-            id: e.id,
-            source: e.source,
-            target: e.target,
-            protocol: e.protocol,
-            is_violated: e.isViolated || false
-          }))
-        }),
-      });
+      const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const endpoints = isLocalhost
+        ? ['http://127.0.0.1:8000/api/audit', 'https://archsense.onrender.com/api/audit']
+        : [process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api/audit` : 'https://archsense.onrender.com/api/audit'];
 
-      if (response.ok) {
-        const data = await response.json();
-        setScore(data.score);
-        setStatus(data.status);
-        setViolations(data.violations);
-        if (data.ai_reasoning) {
-          setAiReasoning(data.ai_reasoning);
+      const payload = {
+        scenario_id: currentScenario.id,
+        pr_title: prTitle,
+        git_diff: diffCode,
+        nodes: currentScenario.nodes.map(n => ({
+          id: n.id,
+          label: n.label,
+          type: n.type,
+          x: n.x,
+          y: n.y,
+          width: n.width,
+          height: n.height,
+          allowed_egress: n.allowedEgress,
+          color: n.color
+        })),
+        edges: currentScenario.edges.map(e => ({
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          protocol: e.protocol,
+          is_violated: e.isViolated || false
+        }))
+      };
+
+      let auditData: any = null;
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          if (response.ok) {
+            auditData = await response.json();
+            break;
+          }
+        } catch {
+          // If local fails or times out, try next endpoint
         }
-        if (data.inference_provider) {
-          setInferenceProvider(data.inference_provider);
+      }
+
+      if (auditData) {
+        setScore(auditData.score);
+        setStatus(auditData.status);
+        setViolations(auditData.violations);
+        if (auditData.ai_reasoning) {
+          setAiReasoning(auditData.ai_reasoning);
         }
-        if (data.edges) {
-          setEdges(data.edges.map((e: any) => ({
+        if (auditData.inference_provider) {
+          setInferenceProvider(auditData.inference_provider);
+        }
+        if (auditData.edges) {
+          setEdges(auditData.edges.map((e: any) => ({
             id: e.id,
             source: e.source,
             target: e.target,
